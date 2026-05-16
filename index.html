@@ -631,10 +631,10 @@
           <tbody>
             <tr>
               <td><b>ZIPAIR + 別航空会社</b><br>最安探索枠</td>
-              <td>NRT(成田)→IAH(ヒューストン)/LAX(ロサンゼルス)/MCO(オーランド)等をZIPAIR、そこからLIM(リマ)へUnited/LATAM/Copa等</td>
+              <td>NRT(成田)→IAH(ヒューストン)/SFO(サンフランシスコ)/HNL(ホノルル)/SJC(サンノゼ)等をZIPAIR、そこからLIM(リマ)へUnited/LATAM/Copa/Avianca等</td>
               <td>1回乗継なら約20〜30h。自己乗継や2回以上だと35〜55h</td>
-              <td>Trip.com NRT→LIM片道: ¥145,740〜。5〜6月に強い表示で、7/24〜27は検索先で再確認</td>
-              <td>安さの鍵。ZIPAIRはStarlink期待大だが、手荷物/座席/食事を足した総額で比較。別切りなら乗継6h以上、できれば1泊</td>
+              <td>実日付の分割例: 7/25 HNL経由¥201,831、7/26 SFO経由¥298,228〜、7/24 IAH経由¥332,216〜403,198</td>
+              <td>安さの鍵。ZIPAIRはStarlink期待大だが、手荷物/座席/食事を足した総額で比較。LAXは7/24〜27でZIPAIR表示なし、MCOはZIPAIR直行なし</td>
             </tr>
             <tr>
               <td><b>Aeromexico</b><br>1回乗継の本命</td>
@@ -686,15 +686,15 @@
         <label class="select-wrap" title="表示する旅程">
           <i data-lucide="route"></i>
           <select id="scope">
+            <option value="all">全部</option>
             <option value="oneplusdoha">1回乗継 + ドーハ</option>
             <option value="one">1回乗継のみ</option>
-            <option value="all">全部</option>
           </select>
         </label>
         <button class="icon-button" id="avoid-us" aria-pressed="false" title="米国乗継を避ける">
           <i data-lucide="shield-check"></i><span>米国回避</span>
         </button>
-        <button class="icon-button active" id="hide-self" aria-pressed="true" title="自己乗継を隠す">
+        <button class="icon-button" id="hide-self" aria-pressed="false" title="自己乗継を隠す">
           <i data-lucide="badge-check"></i><span>自己乗継なし</span>
         </button>
       </div>
@@ -706,7 +706,7 @@
         <section class="side-section">
           <h2>追加判断材料</h2>
           <div class="code-list">
-            <div class="code-row"><b>総額</b><span>ZIPAIRは7kg機内持込込み。受託手荷物/座席/食事は別料金</span></div>
+            <div class="code-row"><b>総額</b><span>ZIPAIR分割は¥201,831〜。受託手荷物/座席/食事は別料金</span></div>
             <div class="code-row"><b>通信</b><span>ZIPAIRは2026年春までに787全機Starlink予定。Qatarも長距離Starlink強め</span></div>
             <div class="code-row"><b>接続</b><span>米国経由はESTA前提。IAH 1h20は余裕少なめ</span></div>
             <div class="code-row"><b>後続</b><span>LIM→IQTは直行約1h55。LATAMは7〜9月にUS$70台表示あり</span></div>
@@ -762,7 +762,12 @@
       TPE: "台北・桃園国際空港",
       LAX: "ロサンゼルス国際空港",
       MCO: "オーランド国際空港",
-      SFO: "サンフランシスコ国際空港"
+      SFO: "サンフランシスコ国際空港",
+      SJC: "サンノゼ国際空港",
+      YVR: "バンクーバー国際空港",
+      CUN: "カンクン国際空港",
+      SAL: "サン・サルバドル国際空港",
+      BOG: "ボゴタ・エルドラド国際空港"
     };
 
     const outboundOptions = [
@@ -940,6 +945,141 @@
           { from: "NRT", to: "IAH", airline: "United Airlines", duration: 12 * 60 + 10 },
           { layoverAt: "IAH", duration: 80 },
           { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 30 }
+        ]
+      },
+      {
+        id: "20260725-zip-hnl-latam",
+        date: "7/25",
+        label: "ZIPAIR分割・最安表示",
+        route: ["NRT", "HNL", "LAX", "LIM"],
+        airlines: "ZIPAIR + Alaska/LATAM",
+        price: 0,
+        priceJpy: 201831,
+        priceLabel: "¥201,831",
+        priceSource: "KAYAK分割",
+        sourceNote: "NRT-HNL ¥79,931 + HNL-LIM ¥121,900",
+        searchUrl: "https://www.kayak.co.jp/flights/NRT-HNL/2026-07-25?sort=bestflight_a",
+        total: 41 * 60,
+        layoverTotal: 16 * 60 + 8,
+        stops: 2,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 5,
+        score: 82,
+        notes: "KAYAK表示の最安分割。HNL待ち16h08、HNL-LIM内でLAX待ち3h12。別切りなので遅延時は自己責任。",
+        manualPrice: true,
+        legs: [
+          { from: "NRT", to: "HNL", airline: "ZIPAIR", duration: 7 * 60 + 40 },
+          { layoverAt: "HNL", duration: 16 * 60 + 8 },
+          { from: "HNL", to: "LIM", airline: "Alaska Airlines + LATAM (LAX経由)", duration: 17 * 60 + 12 }
+        ]
+      },
+      {
+        id: "20260726-zip-sfo-avianca",
+        date: "7/26",
+        label: "ZIPAIR分割・安め",
+        route: ["NRT", "SFO", "SAL", "BOG", "LIM"],
+        airlines: "ZIPAIR + Avianca",
+        price: 0,
+        priceJpy: 298228,
+        priceLabel: "¥298,228",
+        priceSource: "KAYAK分割",
+        sourceNote: "NRT-SFO ¥229,876 + SFO-LIM ¥68,352",
+        searchUrl: "https://www.kayak.co.jp/flights/NRT-SFO/2026-07-26?sort=bestflight_a",
+        total: 33 * 60,
+        layoverTotal: 8 * 60 + 40,
+        stops: 3,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 5,
+        score: 80,
+        notes: "SFO待ち8h40。SFO-LIMはSAL待ち1h35、BOG待ち1h30のAvianca表示。価格と待ち時間のバランスは良い。",
+        manualPrice: true,
+        legs: [
+          { from: "NRT", to: "SFO", airline: "ZIPAIR", duration: 9 * 60 + 45 },
+          { layoverAt: "SFO", duration: 8 * 60 + 40 },
+          { from: "SFO", to: "LIM", airline: "Avianca (SAL/BOG経由)", duration: 14 * 60 + 35 }
+        ]
+      },
+      {
+        id: "20260726-zip-sfo-copa",
+        date: "7/26",
+        label: "ZIPAIR分割・Copa",
+        route: ["NRT", "SFO", "PTY", "LIM"],
+        airlines: "ZIPAIR + Copa",
+        price: 0,
+        priceJpy: 314497,
+        priceLabel: "¥314,497",
+        priceSource: "KAYAK分割",
+        sourceNote: "NRT-SFO ¥229,876 + SFO-LIM ¥84,621",
+        searchUrl: "https://www.kayak.co.jp/flights/SFO-LIM/2026-07-27?sort=bestflight_a",
+        total: 32 * 60 + 10,
+        layoverTotal: 9 * 60 + 57,
+        stops: 2,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 5,
+        score: 78,
+        notes: "SFOに15:15着、翌01:12発で待ち9h57。SFO-LIMはPTY待ち1h37のCopa表示。別切りでも余裕は比較的取りやすい。",
+        manualPrice: true,
+        legs: [
+          { from: "NRT", to: "SFO", airline: "ZIPAIR", duration: 9 * 60 + 45 },
+          { layoverAt: "SFO", duration: 9 * 60 + 57 },
+          { from: "SFO", to: "LIM", airline: "Copa Airlines (PTY経由)", duration: 12 * 60 + 28 }
+        ]
+      },
+      {
+        id: "20260724-zip-iah-frontier-latam",
+        date: "7/24",
+        label: "ZIPAIR分割・IAH安め",
+        route: ["NRT", "IAH", "CUN", "LIM"],
+        airlines: "ZIPAIR + Frontier/LATAM",
+        price: 0,
+        priceJpy: 332216,
+        priceLabel: "¥332,216",
+        priceSource: "KAYAK分割",
+        sourceNote: "NRT-IAH ¥274,186 + IAH-LIM ¥58,030",
+        searchUrl: "https://www.kayak.co.jp/flights/IAH-LIM/2026-07-24?sort=bestflight_a",
+        total: 26 * 60 + 10,
+        layoverTotal: 3 * 60 + 7,
+        stops: 2,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 5,
+        score: 70,
+        notes: "IAH待ち3h07。IAH-LIMはCUN待ち3h01の自己乗継表示。安いが入国・再チェックイン・遅延リスクが大きい。",
+        manualPrice: true,
+        legs: [
+          { from: "NRT", to: "IAH", airline: "ZIPAIR", duration: 12 * 60 + 15 },
+          { layoverAt: "IAH", duration: 3 * 60 + 7 },
+          { from: "IAH", to: "LIM", airline: "Frontier + LATAM (CUN経由)", duration: 10 * 60 + 48 }
+        ]
+      },
+      {
+        id: "20260724-zip-iah-united",
+        date: "7/24",
+        label: "ZIPAIR分割・安定寄り",
+        route: ["NRT", "IAH", "LIM"],
+        airlines: "ZIPAIR + United",
+        price: 0,
+        priceJpy: 403198,
+        priceLabel: "¥403,198",
+        priceSource: "KAYAK分割",
+        sourceNote: "NRT-IAH ¥274,186 + IAH-LIM ¥129,012",
+        searchUrl: "https://www.kayak.co.jp/flights/NRT-IAH/2026-07-24?sort=bestflight_a",
+        total: 26 * 60 + 30,
+        layoverTotal: 7 * 60 + 35,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 5,
+        score: 69,
+        notes: "IAH待ち7h35で余裕はある。通しUnitedより少し安いが、別切りなので遅延時の保護は弱い。",
+        manualPrice: true,
+        legs: [
+          { from: "NRT", to: "IAH", airline: "ZIPAIR", duration: 12 * 60 + 15 },
+          { layoverAt: "IAH", duration: 7 * 60 + 35 },
+          { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 40 }
         ]
       },
       {
@@ -1327,6 +1467,7 @@
         skyscannerUrl: "https://www.skyscanner.jp/routes/nrt/lim/tokyo-narita-to-lima.html",
         displayRows: [
           ["単位", "すべて片道参考"],
+          ["ZIPAIR分割", "7/25 HNL経由 ¥201,831〜"],
           ["Trip.com", "NRT→LIM ¥145,740〜"],
           ["Expedia", "NRT→LIM ¥155,940〜"],
           ["Aeromexico", "NRT→LIM ¥363,380〜"]
@@ -1420,7 +1561,8 @@
 
     function applyPricePolicy() {
       outboundOptions.forEach(item => {
-        if (item.route.includes("IAH") && item.airlines.includes("United")) {
+        if (item.manualPrice) return;
+        if (item.route.includes("IAH") && item.airlines === "United Airlines") {
           const yen = Math.round(item.price * USD_JPY);
           item.priceJpy = yen;
           item.priceLabel = `約¥${yen.toLocaleString("ja-JP")} / US$${item.price.toLocaleString("en-US")}`;
@@ -1463,9 +1605,9 @@
     const state = {
       trip: "outbound",
       sort: "recommended",
-      scope: "oneplusdoha",
+      scope: "all",
       avoidUs: false,
-      hideSelf: true
+      hideSelf: false
     };
 
     function fmtMinutes(total) {
