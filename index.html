@@ -1,0 +1,1643 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tokyo to Lima Flight Board</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --panel: #ffffff;
+      --ink: #1e2726;
+      --muted: #67716e;
+      --line: #ddd7cd;
+      --teal: #0f766e;
+      --teal-soft: #dcefed;
+      --amber: #b86e00;
+      --amber-soft: #f4e3c5;
+      --red: #a84032;
+      --green: #2f7d4d;
+      --blue: #2c5e92;
+      --shadow: 0 10px 30px rgba(38, 34, 27, 0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.72), rgba(246,243,238,0.95) 38%),
+        var(--bg);
+    }
+
+    a { color: inherit; }
+
+    button, select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(1280px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      padding: 10px 0 18px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(128px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .strategy {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .strategy-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .strategy-head h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .strategy-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .strategy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .strategy-table th,
+    .strategy-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      line-height: 1.35;
+    }
+
+    .strategy-table th {
+      color: var(--muted);
+      font-size: 12px;
+      background: #fbfaf8;
+      white-space: nowrap;
+    }
+
+    .strategy-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .strategy-table b {
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+
+    .strategy-note {
+      padding: 12px 16px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      background: #fbfaf8;
+      border-top: 1px solid var(--line);
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 78px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .metric .value {
+      margin-top: 8px;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 750;
+    }
+
+    .metric .sub {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: rgba(246, 243, 238, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .segments {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .control-stack {
+      display: grid;
+      gap: 8px;
+    }
+
+    .seg, .icon-button, .select-wrap {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .seg {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .seg[aria-pressed="true"] {
+      background: var(--teal-soft);
+      border-color: #9dd0ca;
+      color: #0a4f49;
+      font-weight: 700;
+    }
+
+    .seg svg, .icon-button svg { width: 17px; height: 17px; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: end;
+    }
+
+    .select-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 10px;
+      background: #fff;
+    }
+
+    .select-wrap select {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      min-height: 36px;
+      color: var(--ink);
+      outline: 0;
+      padding-right: 4px;
+    }
+
+    .icon-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 10px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .icon-button.active {
+      background: var(--amber-soft);
+      border-color: #ddb773;
+      color: #724500;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: start;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .route-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .route-title span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 26px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fbfaf8;
+      color: #39423f;
+      white-space: nowrap;
+    }
+
+    .pill.good { background: #e0f0e7; border-color: #a9d1bb; color: var(--green); }
+    .pill.warn { background: #f8e8d9; border-color: #e5b98a; color: var(--amber); }
+    .pill.risk { background: #f4dfdc; border-color: #d6a39b; color: var(--red); }
+    .pill.info { background: #dfeaf5; border-color: #adc6dd; color: var(--blue); }
+
+    .price-box {
+      text-align: right;
+      min-width: 132px;
+    }
+
+    .price {
+      font-size: 25px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .yen {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 9px;
+    }
+
+    .leg, .layover {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 58px;
+    }
+
+    .node {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal);
+      color: #fff;
+      margin-left: 5px;
+    }
+
+    .node svg { width: 17px; height: 17px; }
+
+    .leg-main, .layover-main {
+      min-width: 0;
+    }
+
+    .airport-line {
+      font-weight: 720;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    .airport-line small {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .airline-line {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .duration {
+      justify-self: end;
+      min-width: 74px;
+      text-align: right;
+      font-weight: 800;
+      color: #26312f;
+    }
+
+    .layover {
+      min-height: 42px;
+      color: var(--amber);
+    }
+
+    .layover .node {
+      background: var(--amber-soft);
+      color: var(--amber);
+      border: 1px solid #dfbb78;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-self: start;
+    }
+
+    .detail {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      min-height: 72px;
+      background: #fbfaf8;
+    }
+
+    .detail dt {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .detail dd {
+      margin: 7px 0 0;
+      font-weight: 760;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 16px;
+      align-items: center;
+    }
+
+    .actions a, .actions button {
+      min-height: 36px;
+    }
+
+    .primary {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .side {
+      display: grid;
+      gap: 12px;
+      position: sticky;
+      top: 86px;
+    }
+
+    .side-section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .side-section h2 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .code-list {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+    }
+
+    .code-row {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .code-row b {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      letter-spacing: 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .empty {
+      border: 1px dashed #c6beb2;
+      background: #fff;
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    .copy-toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 20;
+      min-height: 38px;
+      max-width: min(360px, calc(100vw - 36px));
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: #142321;
+      color: #fff;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+    }
+
+    .copy-toast.show {
+      display: flex;
+    }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .side { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 820px) {
+      .shell { width: min(100vw - 20px, 760px); padding-top: 14px; }
+      .topbar { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .strategy-head { grid-template-columns: 1fr; }
+      .strategy-table { min-width: 820px; }
+      .strategy-scroll { overflow-x: auto; }
+      .toolbar { grid-template-columns: 1fr; top: 0; }
+      .filters { justify-content: start; }
+      .card-head { grid-template-columns: 1fr; }
+      .price-box { text-align: left; }
+      .card-body { grid-template-columns: 1fr; }
+      .side { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .title h1 { font-size: 23px; }
+      .summary { grid-template-columns: 1fr; }
+      .seg, .icon-button, .select-wrap { width: 100%; justify-content: center; }
+      .filters, .segments { display: grid; grid-template-columns: 1fr; }
+      .leg, .layover { grid-template-columns: 34px minmax(0, 1fr); }
+      .duration { grid-column: 2; justify-self: start; text-align: left; min-width: 0; }
+      .node { margin-left: 0; width: 30px; height: 30px; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="topbar" aria-label="Overview">
+      <div class="title">
+        <h1>東京からリマ 航空券ボード</h1>
+        <p>2026年7月24〜27日発の行き、8月30日前後の帰り。価格はSkyscanner日本版の円表示を先に見て、安い他サイト円表示だけ採用。</p>
+      </div>
+      <a class="icon-button primary" href="https://www.skyscanner.jp/routes/tyoa/lim/tokyo-to-lima.html" target="_blank" rel="noreferrer">
+        <i data-lucide="external-link"></i><span>Skyscanner</span>
+      </a>
+    </section>
+
+    <section class="summary" id="summary" aria-label="Summary"></section>
+
+    <section class="strategy" aria-label="Airline strategy">
+      <div class="strategy-head">
+        <div>
+          <h2>航空会社/組み合わせ別の予約方針</h2>
+          <p>ルート、所要時間、概算費用、予約判断を先に確認してから下のカードを並び替え。</p>
+        </div>
+        <span class="pill info">Skyscanner基準 + 安い円表示だけ採用</span>
+      </div>
+      <div class="strategy-scroll">
+        <table class="strategy-table">
+          <thead>
+            <tr>
+              <th>組み合わせ</th>
+              <th>主なルート</th>
+              <th>所要時間目安</th>
+              <th>概算費用</th>
+              <th>予約方針</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>ZIPAIR + Volaris/Arajet等</b><br>最安探索枠</td>
+              <td>NRT→IAH/LAX/MCO等をZIPAIR、そこからLIMへ別航空会社。復路はLIM→MEX→NRTなどが見える</td>
+              <td>1回乗継なら約20〜30h、自己乗継/2回以上なら35〜55h</td>
+              <td>往復 約¥18〜23万台が見えたら強い。片道は¥8〜15万台表示もあるが自己乗継注意</td>
+              <td>ZIPAIR区間が安さの鍵。7月下旬より8〜9月が強い。通し発券でない場合は同日接続を避ける</td>
+            </tr>
+            <tr>
+              <td><b>Aeromexico</b><br>1回乗継の本命</td>
+              <td>NRT→MEX→LIM / LIM→MEX→NRT</td>
+              <td>行き約22h、帰りは接続次第で約31〜42h</td>
+              <td>7月下旬は片道¥25〜30万台なら検討圏</td>
+              <td>旅程が綺麗で米国回避。安くなりにくいので、良い日程が出たら待ちすぎない</td>
+            </tr>
+            <tr>
+              <td><b>United / ANA</b><br>速さ優先</td>
+              <td>NRT→IAH→LIM / LIM→IAH→NRT</td>
+              <td>約20〜24h</td>
+              <td>往復約¥35万〜、片道も高めになりやすい</td>
+              <td>最速だが米国入国/ESTAと短い乗継がリスク。値下がり待ちは期待しにくい</td>
+            </tr>
+            <tr>
+              <td><b>Qatar</b><br>Starlink/作業重視</td>
+              <td>NRT→DOH→GRU→LIM / LIM→GRU→DOH→NRT</td>
+              <td>約38〜45h</td>
+              <td>5〜6月は安い表示あり。7月下旬は日程次第</td>
+              <td>2回乗継で長いが機内ネット重視なら残す。体力コストを価格差と比較</td>
+            </tr>
+            <tr>
+              <td><b>LATAM</b><br>南米接続</td>
+              <td>HND/NRT→SYD/SCL→LIM、または米国/南米都市経由</td>
+              <td>約32h〜</td>
+              <td>6月は比較的安い表示あり</td>
+              <td>南米側接続が噛み合えば候補。1回乗継にこだわるなら優先度は下がる</td>
+            </tr>
+            <tr>
+              <td><b>欧州系</b><br>予備</td>
+              <td>TYO→MAD/CDG/AMS等→LIM</td>
+              <td>約32〜45h</td>
+              <td>安ければ比較。通常は体力負担が大きい</td>
+              <td>米国回避には使えるが遠回り。価格がかなり安い時だけ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="strategy-note">
+        ZIPAIR + Volaris/Arajet等は「1枚のきれいな航空券」というより、Skyscanner/OTAが安い部品を組み合わせて見せるケースが多い。自分で組むなら、ZIPAIRの到着都市からLIM直行または少ない乗継でつなげる都市を選び、最低でも長めの乗継、できれば1泊を置く。
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Controls">
+      <div class="control-stack">
+        <div class="segments" role="group" aria-label="Trip">
+          <button class="seg" data-trip="outbound" aria-pressed="true"><i data-lucide="plane-takeoff"></i><span>行き</span></button>
+          <button class="seg" data-trip="return" aria-pressed="false"><i data-lucide="plane-landing"></i><span>帰り</span></button>
+        </div>
+        <div class="segments" role="group" aria-label="Sort">
+          <button class="seg" data-sort="recommended" aria-pressed="true"><i data-lucide="sparkles"></i><span>おすすめ</span></button>
+          <button class="seg" data-sort="price" aria-pressed="false"><i data-lucide="badge-dollar-sign"></i><span>安い順</span></button>
+          <button class="seg" data-sort="duration" aria-pressed="false"><i data-lucide="clock-3"></i><span>早い順</span></button>
+          <button class="seg" data-sort="layover" aria-pressed="false"><i data-lucide="timer-reset"></i><span>待ち短い順</span></button>
+          <button class="seg" data-sort="starlink" aria-pressed="false"><i data-lucide="satellite"></i><span>Starlink</span></button>
+        </div>
+      </div>
+      <div class="filters">
+        <label class="select-wrap" title="表示する旅程">
+          <i data-lucide="route"></i>
+          <select id="scope">
+            <option value="oneplusdoha">1回乗継 + ドーハ</option>
+            <option value="one">1回乗継のみ</option>
+            <option value="all">全部</option>
+          </select>
+        </label>
+        <button class="icon-button" id="avoid-us" aria-pressed="false" title="米国乗継を避ける">
+          <i data-lucide="shield-check"></i><span>米国回避</span>
+        </button>
+        <button class="icon-button active" id="hide-self" aria-pressed="true" title="自己乗継を隠す">
+          <i data-lucide="badge-check"></i><span>自己乗継なし</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="result-list" id="results"></div>
+      <aside class="side" aria-label="Reference">
+        <section class="side-section">
+          <h2>空港コード</h2>
+          <div class="code-list" id="airport-codes"></div>
+        </section>
+        <section class="side-section">
+          <h2>検索URL</h2>
+          <div class="code-list">
+            <a class="icon-button" href="https://www.skyscanner.jp/routes/tyoa/lim/tokyo-to-lima.html" target="_blank" rel="noreferrer"><i data-lucide="plane"></i><span>Skyscanner</span></a>
+            <a class="icon-button" href="https://www.expedia.co.jp/lp/flights/tyo/lim/tokyo-to-lima" target="_blank" rel="noreferrer"><i data-lucide="building-2"></i><span>Expedia</span></a>
+            <a class="icon-button" href="https://www.kiwi.com/en/cheap-flights/tokyo-japan/lima-peru/" target="_blank" rel="noreferrer"><i data-lucide="globe-2"></i><span>Kiwi</span></a>
+            <a class="icon-button" href="https://www.skyscanner.jp/routes/lim/tyoa/lima-to-tokyo.html" target="_blank" rel="noreferrer"><i data-lucide="plane-landing"></i><span>帰り Skyscanner</span></a>
+            <a class="icon-button" href="https://www.expedia.co.jp/lp/flights/lim/tyo/lima-to-tokyo" target="_blank" rel="noreferrer"><i data-lucide="building-2"></i><span>帰り Expedia</span></a>
+            <a class="icon-button" href="https://www.united.com/en-pe/flights-from-lima-to-tokyo" target="_blank" rel="noreferrer"><i data-lucide="badge-dollar-sign"></i><span>帰り United</span></a>
+          </div>
+          <p class="note">カードの検索ボタンは、Skyscanner基準より安い円表示がある場合だけ他サイトへ向けます。</p>
+        </section>
+        <section class="side-section">
+          <h2>価格ルール</h2>
+          <div class="code-list" id="price-rules"></div>
+          <p class="note">Skyscanner日本版の円表示を先に採用。他サイトはSkyscanner基準より安い円表示が見つかった場合だけリンクします。</p>
+        </section>
+        <section class="side-section">
+          <h2>予約タイミング</h2>
+          <div class="code-list">
+            <div class="code-row"><b>結論</b><span>6/10〜6/20を第1購入候補。良い価格なら即決</span></div>
+            <div class="code-row"><b>ZIPAIR</b><span>5〜6月と8〜9月が安い。7月下旬は上がりやすい</span></div>
+            <div class="code-row"><b>1回</b><span>メキシコ経由は席が少ないので待ちすぎない</span></div>
+            <div class="code-row"><b>監視</b><span>Skyscanner価格アラート + 週2回手動確認</span></div>
+          </div>
+          <p class="note">Skyscannerは東京→リマの最安予約タイミングを約40日前と表示。7/24発なら6/14前後。</p>
+        </section>
+        <section class="side-section">
+          <h2>共有/デプロイ</h2>
+          <div class="code-list">
+            <a class="icon-button" href="https://app.netlify.com/drop" target="_blank" rel="noreferrer"><i data-lucide="upload-cloud"></i><span>Netlify Drop</span></a>
+            <a class="icon-button" href="https://vercel.com/docs/cli/deploy" target="_blank" rel="noreferrer"><i data-lucide="square-terminal"></i><span>Vercel CLI</span></a>
+            <a class="icon-button" href="https://docs.github.com/pages" target="_blank" rel="noreferrer"><i data-lucide="github"></i><span>GitHub Pages</span></a>
+          </div>
+          <p class="note">一番簡単なのは、このフォルダをNetlify Dropへドラッグ&ドロップ。公開URLを友達に送れます。</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div class="copy-toast" id="toast"><i data-lucide="copy-check"></i><span>URLをコピーしました</span></div>
+
+  <script>
+    const USD_JPY = 158;
+
+    const airports = {
+      NRT: "成田空港",
+      HND: "羽田空港",
+      LIM: "リマ・ホルヘ・チャベス国際空港",
+      IAH: "ヒューストン・ジョージ・ブッシュ空港",
+      MEX: "メキシコシティ国際空港",
+      JFK: "ニューヨークJFK空港",
+      DOH: "ドーハ・ハマド国際空港",
+      GRU: "サンパウロ・グアルーリョス国際空港",
+      SYD: "シドニー国際空港",
+      SCL: "サンティアゴ国際空港",
+      HNL: "ホノルル国際空港",
+      LAS: "ラスベガス・ハリーリード国際空港",
+      PTY: "パナマシティ・トクメン国際空港",
+      TPE: "台北・桃園国際空港",
+      LAX: "ロサンゼルス国際空港",
+      SFO: "サンフランシスコ国際空港"
+    };
+
+    const outboundOptions = [
+      {
+        id: "20260725-mex",
+        date: "7/25",
+        label: "1回乗継の第一候補",
+        route: ["NRT", "MEX", "LIM"],
+        airlines: "Aeromexico",
+        price: 2489,
+        total: 22 * 60 + 15,
+        layoverTotal: 180,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 96,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
+        notes: "米国回避、乗継3時間。価格と体力のバランスが良い。",
+        legs: [
+          { from: "NRT", to: "MEX", airline: "Aeromexico", duration: 13 * 60 + 15 },
+          { layoverAt: "MEX", duration: 180 },
+          { from: "MEX", to: "LIM", airline: "Aeromexico", duration: 6 * 60 }
+        ]
+      },
+      {
+        id: "20260727-mex",
+        date: "7/27",
+        label: "1回乗継の最安寄り",
+        route: ["NRT", "MEX", "LIM"],
+        airlines: "Aeromexico",
+        price: 2426,
+        total: 22 * 60 + 15,
+        layoverTotal: 180,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 93,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
+        notes: "旅程はきれい。出発が遅めなので現地バッファは減る。",
+        legs: [
+          { from: "NRT", to: "MEX", airline: "Aeromexico", duration: 13 * 60 + 15 },
+          { layoverAt: "MEX", duration: 180 },
+          { from: "MEX", to: "LIM", airline: "Aeromexico", duration: 6 * 60 }
+        ]
+      },
+      {
+        id: "20260724-mex",
+        date: "7/24",
+        label: "早め到着・米国回避",
+        route: ["NRT", "MEX", "LIM"],
+        airlines: "Aeromexico",
+        price: 3230,
+        total: 22 * 60 + 15,
+        layoverTotal: 180,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 86,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-24?sort=bestflight_a",
+        notes: "早く出る分、リマ以降の調整余地が大きい。価格は高い。",
+        legs: [
+          { from: "NRT", to: "MEX", airline: "Aeromexico", duration: 13 * 60 + 15 },
+          { layoverAt: "MEX", duration: 180 },
+          { from: "MEX", to: "LIM", airline: "Aeromexico", duration: 6 * 60 }
+        ]
+      },
+      {
+        id: "20260724-jfk",
+        date: "7/24",
+        label: "1回乗継の安め",
+        route: ["HND", "JFK", "LIM"],
+        airlines: "Japan Airlines",
+        price: 2221,
+        total: 27 * 60 + 10,
+        layoverTotal: 359,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 1,
+        score: 72,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-24?sort=bestflight_a",
+        notes: "価格は比較的良い。米国乗継でESTAと入国審査が必要。",
+        legs: [
+          { from: "HND", to: "JFK", airline: "Japan Airlines", duration: 13 * 60 + 10 },
+          { layoverAt: "JFK", duration: 359 },
+          { from: "JFK", to: "LIM", airline: "Japan Airlines / LATAM系", duration: 8 * 60 + 1 }
+        ]
+      },
+      {
+        id: "20260724-iah",
+        date: "7/24",
+        label: "最速",
+        route: ["NRT", "IAH", "LIM"],
+        airlines: "United Airlines",
+        price: 2693,
+        total: 20 * 60,
+        layoverTotal: 80,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 68,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-24?sort=bestflight_a",
+        notes: "20時間は魅力。ただし米国乗継1時間20分はかなり短い。",
+        legs: [
+          { from: "NRT", to: "IAH", airline: "United Airlines", duration: 12 * 60 + 10 },
+          { layoverAt: "IAH", duration: 80 },
+          { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 30 }
+        ]
+      },
+      {
+        id: "20260725-iah",
+        date: "7/25",
+        label: "最速",
+        route: ["NRT", "IAH", "LIM"],
+        airlines: "United / ANA",
+        price: 2764,
+        total: 20 * 60,
+        layoverTotal: 80,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 66,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
+        notes: "KAYAK上のQuickest候補。速いが米国乗継1時間20分。",
+        legs: [
+          { from: "NRT", to: "IAH", airline: "United / ANA", duration: 12 * 60 + 10 },
+          { layoverAt: "IAH", duration: 80 },
+          { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 30 }
+        ]
+      },
+      {
+        id: "20260726-iah",
+        date: "7/26",
+        label: "最速",
+        route: ["NRT", "IAH", "LIM"],
+        airlines: "United Airlines",
+        price: 2886,
+        total: 20 * 60,
+        layoverTotal: 80,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 64,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-26?sort=bestflight_a",
+        notes: "速いが高め。米国乗継が短い。",
+        legs: [
+          { from: "NRT", to: "IAH", airline: "United Airlines", duration: 12 * 60 + 10 },
+          { layoverAt: "IAH", duration: 80 },
+          { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 30 }
+        ]
+      },
+      {
+        id: "20260727-iah",
+        date: "7/27",
+        label: "最速",
+        route: ["NRT", "IAH", "LIM"],
+        airlines: "ANA / United",
+        price: 2660,
+        total: 20 * 60,
+        layoverTotal: 80,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 67,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
+        notes: "速いが、同じく米国乗継が短い。",
+        legs: [
+          { from: "NRT", to: "IAH", airline: "ANA / United", duration: 12 * 60 + 10 },
+          { layoverAt: "IAH", duration: 80 },
+          { from: "IAH", to: "LIM", airline: "United Airlines", duration: 6 * 60 + 30 }
+        ]
+      },
+      {
+        id: "20260725-doh",
+        date: "7/25",
+        label: "ドーハ枠・最安",
+        route: ["NRT", "DOH", "GRU", "LIM"],
+        airlines: "Qatar Airways + LATAM",
+        price: 1207,
+        total: 40 * 60 + 20,
+        layoverTotal: 570,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 5,
+        score: 90,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
+        notes: "Starlink期待値と価格が強い。2回乗継で長い。",
+        legs: [
+          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
+          { layoverAt: "DOH", duration: 305 },
+          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
+          { layoverAt: "GRU", duration: 265 },
+          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
+        ]
+      },
+      {
+        id: "20260725-doh-long",
+        date: "7/25",
+        label: "ドーハ枠・最安長め",
+        route: ["NRT", "DOH", "GRU", "LIM"],
+        airlines: "Qatar Airways + LATAM",
+        price: 1202,
+        total: 45 * 60 + 20,
+        layoverTotal: 870,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 5,
+        score: 84,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
+        notes: "価格は最安級。ドーハ待ちが10時間あり、休憩込みならあり。",
+        legs: [
+          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
+          { layoverAt: "DOH", duration: 605 },
+          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
+          { layoverAt: "GRU", duration: 265 },
+          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
+        ]
+      },
+      {
+        id: "20260727-doh",
+        date: "7/27",
+        label: "ドーハ枠",
+        route: ["NRT", "DOH", "GRU", "LIM"],
+        airlines: "Qatar Airways + LATAM",
+        price: 1284,
+        total: 38 * 60 + 5,
+        layoverTotal: 435,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 5,
+        score: 88,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
+        notes: "Starlink期待値は高い。移動時間は重い。",
+        legs: [
+          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
+          { layoverAt: "DOH", duration: 305 },
+          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
+          { layoverAt: "GRU", duration: 130 },
+          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
+        ]
+      },
+      {
+        id: "20260726-doh",
+        date: "7/26",
+        label: "ドーハ枠",
+        route: ["NRT", "DOH", "GRU", "LIM"],
+        airlines: "Qatar Airways + LATAM",
+        price: 1671,
+        total: 38 * 60 + 5,
+        layoverTotal: 435,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 5,
+        score: 82,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-26?sort=bestflight_a",
+        notes: "7/27より高い。日程都合が合う場合の予備。",
+        legs: [
+          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
+          { layoverAt: "DOH", duration: 305 },
+          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
+          { layoverAt: "GRU", duration: 130 },
+          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
+        ]
+      },
+      {
+        id: "20260727-syd",
+        date: "7/27",
+        label: "南回り",
+        route: ["HND", "SYD", "SCL", "LIM"],
+        airlines: "LATAM Airlines",
+        price: 1547,
+        total: 32 * 60 + 25,
+        layoverTotal: 350,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 66,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
+        notes: "米国回避で比較的安い。Starlink目的では弱い。",
+        legs: [
+          { from: "HND", to: "SYD", airline: "LATAM / partner", duration: 9 * 60 + 45 },
+          { layoverAt: "SYD", duration: 170 },
+          { from: "SYD", to: "SCL", airline: "LATAM Airlines", duration: 12 * 60 + 35 },
+          { layoverAt: "SCL", duration: 180 },
+          { from: "SCL", to: "LIM", airline: "LATAM Airlines", duration: 4 * 60 + 15 }
+        ]
+      },
+      {
+        id: "20260724-self",
+        date: "7/24",
+        label: "自己乗継・最安",
+        route: ["NRT", "HNL", "LAS", "PTY", "LIM"],
+        airlines: "複数社",
+        price: 1241,
+        total: 34 * 60 + 30,
+        layoverTotal: 663,
+        stops: 3,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 3,
+        score: 40,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-24?sort=bestflight_a",
+        notes: "安いが自己乗継あり。重要旅程では優先度低め。",
+        legs: [
+          { from: "NRT", to: "HNL", airline: "ZIPAIRなど", duration: 7 * 60 + 15 },
+          { layoverAt: "HNL", duration: 335 },
+          { from: "HNL", to: "LAS", airline: "複数社", duration: 5 * 60 + 40 },
+          { layoverAt: "LAS", duration: 144 },
+          { from: "LAS", to: "PTY", airline: "複数社", duration: 6 * 60 + 5 },
+          { layoverAt: "PTY", duration: 184 },
+          { from: "PTY", to: "LIM", airline: "Copa Airlinesなど", duration: 4 * 60 + 27 }
+        ]
+      },
+      {
+        id: "20260726-self",
+        date: "7/26",
+        label: "自己乗継・最安級",
+        route: ["NRT", "TPE", "SFO", "PTY", "LIM"],
+        airlines: "China Airlines + Copaなど",
+        price: 1192,
+        total: 52 * 60 + 5,
+        layoverTotal: 1534,
+        stops: 3,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 1,
+        score: 35,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-26?sort=bestflight_a",
+        notes: "安いが長く、自己乗継と米国乗継が混ざる。",
+        legs: [
+          { from: "NRT", to: "TPE", airline: "China Airlines", duration: 3 * 60 + 45 },
+          { layoverAt: "TPE", duration: 675 },
+          { from: "TPE", to: "SFO", airline: "China Airlines", duration: 11 * 60 + 20 },
+          { layoverAt: "SFO", duration: 282 },
+          { from: "SFO", to: "PTY", airline: "Copa Airlinesなど", duration: 7 * 60 + 5 },
+          { layoverAt: "PTY", duration: 577 },
+          { from: "PTY", to: "LIM", airline: "Copa Airlinesなど", duration: 4 * 60 + 21 }
+        ]
+      },
+      {
+        id: "20260727-self-starlux",
+        date: "7/27",
+        label: "自己乗継・最安",
+        route: ["NRT", "TPE", "LAX", "LIM"],
+        airlines: "STARLUX + LATAM",
+        price: 1191,
+        total: 55 * 60 + 55,
+        layoverTotal: 1865,
+        stops: 2,
+        usTransit: true,
+        selfTransfer: true,
+        starlink: 1,
+        score: 34,
+        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
+        notes: "最安表示の一つ。ただしLAXで自己乗継23時間45分。",
+        legs: [
+          { from: "NRT", to: "TPE", airline: "STARLUX Airlines", duration: 3 * 60 + 45 },
+          { layoverAt: "TPE", duration: 440 },
+          { from: "TPE", to: "LAX", airline: "STARLUX Airlines", duration: 11 * 60 + 25 },
+          { layoverAt: "LAX", duration: 1425 },
+          { from: "LAX", to: "LIM", airline: "LATAM Airlines", duration: 9 * 60 + 40 }
+        ]
+      }
+    ];
+
+    const returnOptions = [
+      {
+        id: "20260827-mex-return",
+        date: "8/27",
+        label: "帰り・最安寄り",
+        route: ["LIM", "MEX", "NRT"],
+        airlines: "Volaris / ANA or Aeromexico",
+        price: 835,
+        total: 41 * 60 + 30,
+        layoverTotal: 1085,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 88,
+        kayak: "https://www.skyscanner.com/routes/lima/tyoa/lima-to-tokyo.html",
+        notes: "Skyscannerの8/27 LIM-NRT 1 stop表示を参考化。航空会社/通し発券は要再確認。",
+        legs: [
+          { from: "LIM", to: "MEX", airline: "Volaris / Aeromexico系", duration: 6 * 60 + 5 },
+          { layoverAt: "MEX", duration: 1085 },
+          { from: "MEX", to: "NRT", airline: "ANA / Aeromexico系", duration: 17 * 60 + 20 }
+        ]
+      },
+      {
+        id: "20260830-mex-return",
+        date: "8/30",
+        label: "帰り・1回乗継本命",
+        route: ["LIM", "MEX", "NRT"],
+        airlines: "Aeromexico / ANA",
+        price: 1106,
+        total: 41 * 60 + 30,
+        layoverTotal: 1085,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 92,
+        kayak: "https://www.expedia.com/lp/flights/lim/tyo/lima-to-tokyo",
+        notes: "Skyscanner日本版の8月円表示を基準価格として採用。時刻はLIM-MEX/MEX-NRT公式時刻表ベース。",
+        legs: [
+          { from: "LIM", to: "MEX", airline: "Aeromexico AM19", duration: 6 * 60 + 5 },
+          { layoverAt: "MEX", duration: 1085 },
+          { from: "MEX", to: "NRT", airline: "ANA NH179 / Aeromexico系", duration: 17 * 60 + 20 }
+        ]
+      },
+      {
+        id: "20260902-mex-return",
+        date: "9/2",
+        label: "帰り・少し後ろ倒し",
+        route: ["LIM", "MEX", "NRT"],
+        airlines: "Aeromexico / ANA",
+        price: 980,
+        total: 41 * 60 + 20,
+        layoverTotal: 1075,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 89,
+        kayak: "https://www.skyscanner.com/routes/lima/tyoa/lima-to-tokyo.html",
+        notes: "Skyscannerは9月が安め。9/3最安表示があるため、9/2も要チェック候補。",
+        legs: [
+          { from: "LIM", to: "MEX", airline: "Aeromexico AM19", duration: 6 * 60 + 5 },
+          { layoverAt: "MEX", duration: 1075 },
+          { from: "MEX", to: "NRT", airline: "ANA NH179 / Aeromexico系", duration: 17 * 60 + 20 }
+        ]
+      },
+      {
+        id: "20260830-iah-return",
+        date: "8/30",
+        label: "帰り・米国経由最速寄り",
+        route: ["LIM", "IAH", "NRT"],
+        airlines: "United / ANA",
+        price: 1369,
+        total: 22 * 60 + 50,
+        layoverTotal: 120,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 76,
+        kayak: "https://www.united.com/en-pe/flights-from-lima-to-tokyo",
+        notes: "Skyscanner日本版の8月円表示を基準価格として採用。ESTAと米国入国審査が必要。",
+        legs: [
+          { from: "LIM", to: "IAH", airline: "United UA855", duration: 6 * 60 + 50 },
+          { layoverAt: "IAH", duration: 120 },
+          { from: "IAH", to: "NRT", airline: "United / ANA", duration: 13 * 60 + 60 }
+        ]
+      },
+      {
+        id: "20260831-iah-return",
+        date: "8/31",
+        label: "帰り・米国経由予備",
+        route: ["LIM", "IAH", "NRT"],
+        airlines: "United / ANA",
+        price: 1369,
+        total: 23 * 60 + 50,
+        layoverTotal: 180,
+        stops: 1,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 2,
+        score: 73,
+        kayak: "https://www.united.com/en-pe/flights-from-lima-to-tokyo",
+        notes: "速さ重視の予備。米国乗継なので手続き負担は大きい。",
+        legs: [
+          { from: "LIM", to: "IAH", airline: "United UA855", duration: 6 * 60 + 50 },
+          { layoverAt: "IAH", duration: 180 },
+          { from: "IAH", to: "NRT", airline: "United / ANA", duration: 13 * 60 + 60 }
+        ]
+      },
+      {
+        id: "20260831-kayak-hnd-cheap",
+        date: "8/31",
+        label: "帰り・円表示の安値",
+        route: ["LIM", "HND"],
+        airlines: "複数の航空会社",
+        price: 117326,
+        total: 48 * 60 + 35,
+        layoverTotal: 99999,
+        layoverUnknown: true,
+        stops: 3,
+        usTransit: true,
+        selfTransfer: false,
+        starlink: 1,
+        score: 55,
+        kayak: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND",
+        notes: "KAYAK.co.jpで8/31 LIM-HND片道¥117,326。乗継空港は検索詳細で要確認。",
+        legs: [
+          { from: "LIM", to: "HND", airline: "複数の航空会社・乗継3回", duration: 48 * 60 + 35 }
+        ]
+      },
+      {
+        id: "20260830-doh-return",
+        date: "8/30",
+        label: "帰り・Starlink枠",
+        route: ["LIM", "GRU", "DOH", "NRT"],
+        airlines: "LATAM + Qatar Airways",
+        price: 1200,
+        total: 39 * 60 + 25,
+        layoverTotal: 560,
+        stops: 2,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 5,
+        score: 86,
+        kayak: "https://www.qatarairways.com/en-us/destinations/flights-to-tokyo-narita.html",
+        notes: "Qatar長距離区間でStarlink期待。価格はSkyscanner/Expediaのレンジからの参考。",
+        legs: [
+          { from: "LIM", to: "GRU", airline: "LATAM Airlines", duration: 5 * 60 + 5 },
+          { layoverAt: "GRU", duration: 210 },
+          { from: "GRU", to: "DOH", airline: "Qatar Airways", duration: 14 * 60 + 40 },
+          { layoverAt: "DOH", duration: 350 },
+          { from: "DOH", to: "NRT", airline: "Qatar Airways", duration: 9 * 60 + 50 }
+        ]
+      },
+      {
+        id: "20260903-cheapest-reference",
+        date: "9/3",
+        label: "参考・最安日",
+        route: ["LIM", "MEX", "NRT"],
+        airlines: "Volaris / ANA or Aeromexico",
+        price: 835,
+        total: 41 * 60 + 20,
+        layoverTotal: 1075,
+        stops: 1,
+        usTransit: false,
+        selfTransfer: false,
+        starlink: 1,
+        score: 80,
+        kayak: "https://www.skyscanner.com/routes/lima/tyoa/lima-to-tokyo.html",
+        notes: "前後3日から1日外れるが、Skyscannerが9/3を最安日として表示。比較用に残す。",
+        legs: [
+          { from: "LIM", to: "MEX", airline: "Volaris / Aeromexico系", duration: 6 * 60 + 5 },
+          { layoverAt: "MEX", duration: 1075 },
+          { from: "MEX", to: "NRT", airline: "ANA / Aeromexico系", duration: 17 * 60 + 20 }
+        ]
+      }
+    ];
+
+    const priceRules = {
+      outbound: {
+        skyscannerLabel: "Skyscanner 7月",
+        skyscannerPrice: 242289,
+        skyscannerUrl: "https://www.skyscanner.jp/routes/tyoa/lim/tokyo-to-lima.html",
+        cheaper: [
+          { source: "KAYAK.co.jp", label: "8/25発の参考往復", price: 191259, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E6%9D%B1%E4%BA%AC-TYO/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM" },
+          { source: "Expedia.co.jp", label: "TYO-LIM片道", price: 155670, url: "https://www.expedia.co.jp/lp/flights/tyo/lim/tokyo-to-lima" },
+          { source: "Trip.com", label: "NRT-LIM片道", price: 145740, url: "https://jp.trip.com/flights/airport-nrt-city-lim/" }
+        ]
+      },
+      return: {
+        skyscannerLabel: "Skyscanner 8月",
+        skyscannerPrice: 202357,
+        skyscannerUrl: "https://www.skyscanner.jp/routes/lim/tyoa/lima-to-tokyo.html",
+        septemberLabel: "Skyscanner 9月",
+        septemberPrice: 195739,
+        cheaper: [
+          { source: "KAYAK.co.jp", label: "8/31 LIM-HND片道", price: 117326, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND" },
+          { source: "KAYAK.co.jp", label: "LIM-TYO片道", price: 81840, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-TYO" }
+        ]
+      }
+    };
+
+    const trips = {
+      outbound: outboundOptions,
+      return: returnOptions
+    };
+
+    const tripNames = {
+      outbound: "行き",
+      return: "帰り"
+    };
+
+    function applyPricePolicy() {
+      outboundOptions.forEach(item => {
+        const cheaper = item.route[0] === "NRT" ? priceRules.outbound.cheaper[2] : priceRules.outbound.cheaper[1];
+        item.priceJpy = cheaper.price;
+        item.priceLabel = `¥${cheaper.price.toLocaleString("ja-JP")}〜`;
+        item.priceSource = cheaper.source;
+        item.sourceUrl = cheaper.url;
+        item.sourceNote = `Skyscanner 7月 ¥${priceRules.outbound.skyscannerPrice.toLocaleString("ja-JP")}〜 より安い円表示`;
+      });
+      returnOptions.forEach(item => {
+        const isSeptember = item.date.startsWith("9/");
+        const base = isSeptember ? priceRules.return.septemberPrice : priceRules.return.skyscannerPrice;
+        const label = isSeptember ? priceRules.return.septemberLabel : priceRules.return.skyscannerLabel;
+        item.priceJpy = base;
+        item.priceLabel = `¥${base.toLocaleString("ja-JP")}〜`;
+        item.priceSource = label;
+        item.sourceUrl = priceRules.return.skyscannerUrl;
+        item.sourceNote = "Skyscanner日本版の円表示";
+      });
+      const returnCheap = returnOptions.find(item => item.id === "20260831-kayak-hnd-cheap");
+      if (returnCheap) {
+        returnCheap.priceJpy = 117326;
+        returnCheap.priceLabel = "¥117,326";
+        returnCheap.priceSource = "KAYAK.co.jp";
+        returnCheap.sourceUrl = "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND";
+        returnCheap.sourceNote = "Skyscanner 8月基準より安い円表示";
+      }
+    }
+
+    const state = {
+      trip: "outbound",
+      sort: "recommended",
+      scope: "oneplusdoha",
+      avoidUs: false,
+      hideSelf: true
+    };
+
+    function fmtMinutes(total) {
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      return `${h}h${String(m).padStart(2, "0")}`;
+    }
+
+    function priceValue(item) {
+      return item.priceJpy || Math.round(item.price * USD_JPY);
+    }
+
+    function priceText(item) {
+      return item.priceLabel || `¥${priceValue(item).toLocaleString("ja-JP")}`;
+    }
+
+    function layoverValue(item) {
+      return item.layoverUnknown ? 99999 : item.layoverTotal;
+    }
+
+    function layoverText(item) {
+      return item.layoverUnknown ? "要確認" : fmtMinutes(item.layoverTotal);
+    }
+
+    function starlinkLabel(value) {
+      if (value >= 5) return ["高", "good"];
+      if (value >= 3) return ["中", "info"];
+      if (value >= 2) return ["未確約", "warn"];
+      return ["低", "risk"];
+    }
+
+    function routeName(item) {
+      return item.route.map(code => `${airports[code]} (${code})`).join(" → ");
+    }
+
+    function currentOptions() {
+      return trips[state.trip];
+    }
+
+    function filteredOptions() {
+      return currentOptions()
+        .filter(item => {
+          const doha = item.route.includes("DOH");
+          if (state.scope === "one" && item.stops !== 1) return false;
+          if (state.scope === "oneplusdoha" && !(item.stops === 1 || doha)) return false;
+          if (state.avoidUs && item.usTransit) return false;
+          if (state.hideSelf && item.selfTransfer) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          if (state.sort === "price") return priceValue(a) - priceValue(b);
+          if (state.sort === "duration") return a.total - b.total;
+          if (state.sort === "layover") return layoverValue(a) - layoverValue(b);
+          if (state.sort === "starlink") return b.starlink - a.starlink || priceValue(a) - priceValue(b);
+          return b.score - a.score || priceValue(a) - priceValue(b);
+        });
+    }
+
+    function renderSummary(list) {
+      const root = document.getElementById("summary");
+      const cheapest = [...list].sort((a, b) => priceValue(a) - priceValue(b))[0];
+      const fastest = [...list].sort((a, b) => a.total - b.total)[0];
+      const star = [...list].sort((a, b) => b.starlink - a.starlink || priceValue(a) - priceValue(b))[0];
+      const best = list[0];
+      const all = currentOptions();
+      const metrics = [
+        ["表示件数", `${list.length}/${all.length}件`, `${tripNames[state.trip]}・フィルタ後 / 全候補`],
+        ["最安", cheapest ? priceText(cheapest) : "-", cheapest ? `${cheapest.date} ${cheapest.priceSource}` : "-"],
+        ["最短", fastest ? fmtMinutes(fastest.total) : "-", fastest ? `${fastest.date} ${fastest.route.join("-")}` : "-"],
+        ["先頭候補", best ? priceText(best) : "-", best ? `${best.label}` : "-"]
+      ];
+      if (star) metrics[3] = ["Starlink上位", priceText(star), `${star.date} ${star.route.join("-")}`];
+      root.innerHTML = metrics.map(([label, value, sub]) => `
+        <article class="metric">
+          <div class="label">${label}</div>
+          <div class="value">${value}</div>
+          <div class="sub">${sub}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderAirports() {
+      const used = [...new Set([...outboundOptions, ...returnOptions].flatMap(item => item.route))].sort();
+      document.getElementById("airport-codes").innerHTML = used.map(code => `
+        <div class="code-row"><b>${code}</b><span>${airports[code]}</span></div>
+      `).join("");
+    }
+
+    function renderPriceRules() {
+      const rule = priceRules[state.trip];
+      const rows = [
+        [`基準`, `${rule.skyscannerLabel} ¥${rule.skyscannerPrice.toLocaleString("ja-JP")}〜`]
+      ];
+      if (state.trip === "return") rows.push([`9月`, `${rule.septemberLabel} ¥${rule.septemberPrice.toLocaleString("ja-JP")}〜`]);
+      rule.cheaper.forEach(item => {
+        if (item.price < rule.skyscannerPrice) rows.push([item.source, `${item.label} ¥${item.price.toLocaleString("ja-JP")}`]);
+      });
+      document.getElementById("price-rules").innerHTML = rows.map(([left, right]) => `
+        <div class="code-row"><b>${left}</b><span>${right}</span></div>
+      `).join("");
+    }
+
+    function renderLegs(item) {
+      return item.legs.map(part => {
+        if (part.layoverAt) {
+          return `
+            <div class="layover">
+              <div class="node"><i data-lucide="timer"></i></div>
+              <div class="layover-main">
+                <div class="airport-line">${airports[part.layoverAt]} <small>(${part.layoverAt})</small></div>
+                <div class="airline-line">乗継待ち</div>
+              </div>
+              <div class="duration">${fmtMinutes(part.duration)}</div>
+            </div>
+          `;
+        }
+        return `
+          <div class="leg">
+            <div class="node"><i data-lucide="plane"></i></div>
+            <div class="leg-main">
+              <div class="airport-line">${airports[part.from]} <small>(${part.from})</small> → ${airports[part.to]} <small>(${part.to})</small></div>
+              <div class="airline-line">${part.airline}</div>
+            </div>
+            <div class="duration">${fmtMinutes(part.duration)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderResults() {
+      const list = filteredOptions();
+      const root = document.getElementById("results");
+      renderSummary(list);
+      renderPriceRules();
+      if (!list.length) {
+        root.innerHTML = `<div class="empty">条件に合う候補がありません</div>`;
+        lucide.createIcons();
+        return;
+      }
+      root.innerHTML = list.map(item => {
+        const [star, starClass] = starlinkLabel(item.starlink);
+        const us = item.usTransit ? ["米国乗継", "warn"] : ["米国回避", "good"];
+        const self = item.selfTransfer ? ["自己乗継あり", "risk"] : ["通し発券候補", "info"];
+        return `
+          <article class="card">
+            <header class="card-head">
+              <div>
+                <h2 class="route-title"><i data-lucide="map"></i><span>${routeName(item)}</span></h2>
+                <div class="meta-line">
+                  <span class="pill info">${item.date}発</span>
+                  <span class="pill">${item.airlines}</span>
+                  <span class="pill info">${item.priceSource}</span>
+                  <span class="pill ${starClass}">Starlink ${star}</span>
+                  <span class="pill ${us[1]}">${us[0]}</span>
+                  <span class="pill ${self[1]}">${self[0]}</span>
+                </div>
+              </div>
+              <div class="price-box">
+                <div class="price">${priceText(item)}</div>
+                <div class="yen">${item.sourceNote || item.priceSource}</div>
+              </div>
+            </header>
+            <div class="card-body">
+              <div class="timeline">${renderLegs(item)}</div>
+              <dl class="detail-grid">
+                <div class="detail"><dt>合計所要時間</dt><dd>${fmtMinutes(item.total)}</dd></div>
+                <div class="detail"><dt>乗継回数</dt><dd>${item.stops}回</dd></div>
+                <div class="detail"><dt>乗継待ち合計</dt><dd>${layoverText(item)}</dd></div>
+                <div class="detail"><dt>メモ</dt><dd>${item.notes}</dd></div>
+              </dl>
+            </div>
+            <div class="actions">
+              <a class="icon-button primary" href="${item.sourceUrl || item.kayak}" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i><span>検索で開く</span></a>
+              <button class="icon-button copy" data-url="${item.sourceUrl || item.kayak}"><i data-lucide="copy"></i><span>URL</span></button>
+            </div>
+          </article>
+        `;
+      }).join("");
+      document.querySelectorAll(".copy").forEach(button => {
+        button.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(button.dataset.url);
+          showToast();
+        });
+      });
+      lucide.createIcons();
+    }
+
+    function showToast() {
+      const toast = document.getElementById("toast");
+      toast.classList.add("show");
+      window.clearTimeout(window.__toastTimer);
+      window.__toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    document.querySelectorAll("[data-sort]").forEach(button => {
+      button.addEventListener("click", () => {
+        state.sort = button.dataset.sort;
+        document.querySelectorAll("[data-sort]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        renderResults();
+      });
+    });
+
+    document.querySelectorAll("[data-trip]").forEach(button => {
+      button.addEventListener("click", () => {
+        state.trip = button.dataset.trip;
+        document.querySelectorAll("[data-trip]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        renderResults();
+      });
+    });
+
+    document.getElementById("scope").addEventListener("change", event => {
+      state.scope = event.target.value;
+      renderResults();
+    });
+
+    document.getElementById("avoid-us").addEventListener("click", event => {
+      state.avoidUs = !state.avoidUs;
+      event.currentTarget.classList.toggle("active", state.avoidUs);
+      event.currentTarget.setAttribute("aria-pressed", String(state.avoidUs));
+      renderResults();
+    });
+
+    document.getElementById("hide-self").addEventListener("click", event => {
+      state.hideSelf = !state.hideSelf;
+      event.currentTarget.classList.toggle("active", state.hideSelf);
+      event.currentTarget.setAttribute("aria-pressed", String(state.hideSelf));
+      renderResults();
+    });
+
+    applyPricePolicy();
+    renderAirports();
+    renderResults();
+  </script>
+</body>
+</html>
