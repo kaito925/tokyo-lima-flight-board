@@ -706,7 +706,7 @@
         <section class="side-section">
           <h2>価格ルール</h2>
           <div class="code-list" id="price-rules"></div>
-          <p class="note">Skyscanner日本版の円表示を先に採用。他サイトはSkyscanner基準より安い円表示が見つかった場合だけリンクします。</p>
+          <p class="note">Skyscanner日本版を基準にしつつ、安い他サイトの参考価格があるカードだけ採用。日付・空席は検索先で再確認。</p>
         </section>
         <section class="side-section">
           <h2>予約タイミング</h2>
@@ -1399,7 +1399,7 @@
         item.priceSource = cheaper.source;
         item.sourceUrl = cheaper.url;
         item.searchUrl = cheaper.source === "Trip.com" ? tripSearchUrl(item) : expediaSearchUrl(item);
-        item.sourceNote = `Skyscanner 7月 ¥${priceRules.outbound.skyscannerPrice.toLocaleString("ja-JP")}〜 より安い円表示`;
+        item.sourceNote = `${cheaper.source}参考価格。Skyscanner 7月基準より安いため採用`;
       });
       returnOptions.forEach(item => {
         const isSeptember = item.date.startsWith("9/");
@@ -1419,7 +1419,7 @@
         returnCheap.priceSource = "KAYAK.co.jp";
         returnCheap.sourceUrl = "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND";
         returnCheap.searchUrl = kayakSearchUrl(returnCheap);
-        returnCheap.sourceNote = "Skyscanner 8月基準より安い円表示";
+        returnCheap.sourceNote = "KAYAK参考価格。Skyscanner 8月基準より安いため採用";
       }
     }
 
