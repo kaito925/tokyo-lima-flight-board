@@ -76,6 +76,48 @@
       margin-bottom: 16px;
     }
 
+    .shortlist {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .short-pick {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 122px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .short-pick .label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .short-pick .main {
+      font-weight: 780;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .short-pick .sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .short-pick .pill {
+      white-space: normal;
+      line-height: 1.2;
+    }
+
     .strategy {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -571,6 +613,7 @@
       .shell { width: min(100vw - 20px, 760px); padding-top: 14px; }
       .topbar { grid-template-columns: 1fr; }
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .shortlist { grid-template-columns: 1fr; }
       .strategy-head { grid-template-columns: 1fr; }
       .strategy-table { min-width: 820px; }
       .strategy-scroll { overflow-x: auto; }
@@ -608,6 +651,7 @@
     </section>
 
     <section class="summary" id="summary" aria-label="Summary"></section>
+    <section class="shortlist" id="shortlist" aria-label="Top picks"></section>
 
     <section class="strategy" aria-label="Airline strategy">
       <div class="strategy-head">
@@ -687,6 +731,7 @@
           <i data-lucide="route"></i>
           <select id="scope">
             <option value="all">全部</option>
+            <option value="split">ZIPAIR分割のみ</option>
             <option value="oneplusdoha">1回乗継 + ドーハ</option>
             <option value="one">1回乗継のみ</option>
           </select>
@@ -696,6 +741,9 @@
         </button>
         <button class="icon-button" id="hide-self" aria-pressed="false" title="自己乗継を隠す">
           <i data-lucide="badge-check"></i><span>自己乗継なし</span>
+        </button>
+        <button class="icon-button" id="share-view" title="今の表示条件をコピー">
+          <i data-lucide="link"></i><span>表示URL</span>
         </button>
       </div>
     </section>
@@ -961,6 +1009,10 @@
         priceSource: "KAYAK分割",
         sourceNote: "NRT-HNL ¥79,931 + HNL-LIM ¥121,900",
         searchUrl: "https://www.kayak.co.jp/flights/NRT-HNL/2026-07-25?sort=bestflight_a",
+        sourceLinks: [
+          { label: "NRT-HNL", url: "https://www.kayak.co.jp/flights/NRT-HNL/2026-07-25?sort=bestflight_a" },
+          { label: "HNL-LIM", url: "https://www.kayak.co.jp/flights/HNL-LIM/2026-07-25?sort=bestflight_a" }
+        ],
         total: 41 * 60,
         layoverTotal: 16 * 60 + 8,
         stops: 2,
@@ -988,6 +1040,10 @@
         priceSource: "KAYAK分割",
         sourceNote: "NRT-SFO ¥229,876 + SFO-LIM ¥68,352",
         searchUrl: "https://www.kayak.co.jp/flights/NRT-SFO/2026-07-26?sort=bestflight_a",
+        sourceLinks: [
+          { label: "NRT-SFO", url: "https://www.kayak.co.jp/flights/NRT-SFO/2026-07-26?sort=bestflight_a" },
+          { label: "SFO-LIM", url: "https://www.kayak.co.jp/flights/SFO-LIM/2026-07-26?sort=bestflight_a" }
+        ],
         total: 33 * 60,
         layoverTotal: 8 * 60 + 40,
         stops: 3,
@@ -1015,6 +1071,10 @@
         priceSource: "KAYAK分割",
         sourceNote: "NRT-SFO ¥229,876 + SFO-LIM ¥84,621",
         searchUrl: "https://www.kayak.co.jp/flights/SFO-LIM/2026-07-27?sort=bestflight_a",
+        sourceLinks: [
+          { label: "NRT-SFO", url: "https://www.kayak.co.jp/flights/NRT-SFO/2026-07-26?sort=bestflight_a" },
+          { label: "SFO-LIM", url: "https://www.kayak.co.jp/flights/SFO-LIM/2026-07-27?sort=bestflight_a" }
+        ],
         total: 32 * 60 + 10,
         layoverTotal: 9 * 60 + 57,
         stops: 2,
@@ -1042,6 +1102,10 @@
         priceSource: "KAYAK分割",
         sourceNote: "NRT-IAH ¥274,186 + IAH-LIM ¥58,030",
         searchUrl: "https://www.kayak.co.jp/flights/IAH-LIM/2026-07-24?sort=bestflight_a",
+        sourceLinks: [
+          { label: "NRT-IAH", url: "https://www.kayak.co.jp/flights/NRT-IAH/2026-07-24?sort=bestflight_a" },
+          { label: "IAH-LIM", url: "https://www.kayak.co.jp/flights/IAH-LIM/2026-07-24?sort=bestflight_a" }
+        ],
         total: 26 * 60 + 10,
         layoverTotal: 3 * 60 + 7,
         stops: 2,
@@ -1069,6 +1133,10 @@
         priceSource: "KAYAK分割",
         sourceNote: "NRT-IAH ¥274,186 + IAH-LIM ¥129,012",
         searchUrl: "https://www.kayak.co.jp/flights/NRT-IAH/2026-07-24?sort=bestflight_a",
+        sourceLinks: [
+          { label: "NRT-IAH", url: "https://www.kayak.co.jp/flights/NRT-IAH/2026-07-24?sort=bestflight_a" },
+          { label: "IAH-LIM", url: "https://www.kayak.co.jp/flights/IAH-LIM/2026-07-24?sort=bestflight_a" }
+        ],
         total: 26 * 60 + 30,
         layoverTotal: 7 * 60 + 35,
         stops: 1,
@@ -1588,6 +1656,61 @@
       hideSelf: false
     };
 
+    const validState = {
+      trip: ["outbound", "return"],
+      sort: ["recommended", "price", "duration", "layover", "starlink"],
+      scope: ["all", "split", "oneplusdoha", "one"]
+    };
+
+    function readStateFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const trip = params.get("trip");
+      const sort = params.get("sort");
+      const scope = params.get("scope");
+      if (validState.trip.includes(trip)) state.trip = trip;
+      if (validState.sort.includes(sort)) state.sort = sort;
+      if (validState.scope.includes(scope)) state.scope = scope;
+      state.avoidUs = params.get("avoidUs") === "1";
+      state.hideSelf = params.get("hideSelf") === "1";
+    }
+
+    function viewParams() {
+      const params = new URLSearchParams();
+      if (state.trip !== "outbound") params.set("trip", state.trip);
+      if (state.sort !== "recommended") params.set("sort", state.sort);
+      if (state.scope !== "all") params.set("scope", state.scope);
+      if (state.avoidUs) params.set("avoidUs", "1");
+      if (state.hideSelf) params.set("hideSelf", "1");
+      return params;
+    }
+
+    function currentViewUrl() {
+      const url = new URL(window.location.href);
+      url.search = viewParams().toString();
+      url.hash = "";
+      return url.toString();
+    }
+
+    function syncUrlState() {
+      window.history.replaceState(null, "", currentViewUrl());
+    }
+
+    function syncControlsFromState() {
+      document.querySelectorAll("[data-sort]").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.sort === state.sort));
+      });
+      document.querySelectorAll("[data-trip]").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.trip === state.trip));
+      });
+      document.getElementById("scope").value = state.scope;
+      const avoid = document.getElementById("avoid-us");
+      avoid.classList.toggle("active", state.avoidUs);
+      avoid.setAttribute("aria-pressed", String(state.avoidUs));
+      const hide = document.getElementById("hide-self");
+      hide.classList.toggle("active", state.hideSelf);
+      hide.setAttribute("aria-pressed", String(state.hideSelf));
+    }
+
     function fmtMinutes(total) {
       const h = Math.floor(total / 60);
       const m = total % 60;
@@ -1617,6 +1740,47 @@
       return ["低", "risk"];
     }
 
+    function minLayover(item) {
+      const layovers = item.legs.filter(part => part.layoverAt).map(part => part.duration);
+      return layovers.length ? Math.min(...layovers) : 0;
+    }
+
+    function travelRisk(item) {
+      const reasons = [];
+      let points = 0;
+      const shortest = minLayover(item);
+      if (item.selfTransfer) {
+        points += 2;
+        reasons.push("別切り");
+      }
+      if (item.usTransit) {
+        points += 1;
+        reasons.push("米国入国");
+      }
+      if (item.selfTransfer && shortest && shortest < 4 * 60) {
+        points += 2;
+        reasons.push(`自己乗継${fmtMinutes(shortest)}`);
+      } else if (item.usTransit && shortest && shortest < 2 * 60) {
+        points += 2;
+        reasons.push(`米国乗継${fmtMinutes(shortest)}`);
+      }
+      if (item.stops >= 3) {
+        points += 1;
+        reasons.push("乗継多い");
+      }
+      if (item.total >= 40 * 60) {
+        points += 1;
+        reasons.push("長時間");
+      }
+      if (!item.layoverUnknown && item.layoverTotal >= 12 * 60) {
+        points += 1;
+        reasons.push("待ち長め");
+      }
+      if (points >= 4) return ["高リスク", "risk", reasons.slice(0, 3).join("・")];
+      if (points >= 2) return ["中リスク", "warn", reasons.slice(0, 3).join("・")];
+      return ["低リスク", "good", reasons.length ? reasons.slice(0, 2).join("・") : "通し発券寄り"];
+    }
+
     function routeName(item) {
       return item.route.map(code => `${airports[code]} (${code})`).join(" → ");
     }
@@ -1629,6 +1793,8 @@
       return currentOptions()
         .filter(item => {
           const doha = item.route.includes("DOH");
+          const split = item.airlines.includes("ZIPAIR") && item.selfTransfer;
+          if (state.scope === "split" && !split) return false;
           if (state.scope === "one" && item.stops !== 1) return false;
           if (state.scope === "oneplusdoha" && !(item.stops === 1 || doha)) return false;
           if (state.avoidUs && item.usTransit) return false;
@@ -1665,6 +1831,47 @@
           <div class="sub">${sub}</div>
         </article>
       `).join("");
+    }
+
+    function shortlistItems(list) {
+      const picks = [];
+      const add = (label, item, reason) => {
+        if (!item || picks.some(pick => pick.item.id === item.id)) return;
+        picks.push({ label, item, reason });
+      };
+      const cheapest = [...list].sort((a, b) => priceValue(a) - priceValue(b))[0];
+      const fastest = [...list].sort((a, b) => a.total - b.total)[0];
+      const zipair = [...list].filter(item => item.airlines.includes("ZIPAIR")).sort((a, b) => priceValue(a) - priceValue(b))[0];
+      const oneStop = [...list].filter(item => item.stops === 1 && !item.selfTransfer).sort((a, b) => priceValue(a) - priceValue(b))[0];
+      const star = [...list].sort((a, b) => b.starlink - a.starlink || priceValue(a) - priceValue(b))[0];
+      add("最安表示", cheapest, "まず価格の床を見る候補");
+      if (state.trip === "outbound") {
+        add("ZIPAIR分割", zipair, "安さとStarlink重視の確認枠");
+        add("移動が短い", fastest, "体力と到着時刻を優先");
+      } else {
+        add("1回乗継", oneStop, "復路で一番説明しやすい候補");
+        add("移動が短い", fastest, "帰国後の疲労を減らす候補");
+      }
+      add("Starlink", star, "通信重視で見る候補");
+      return picks.slice(0, 3);
+    }
+
+    function renderShortlist(list) {
+      const root = document.getElementById("shortlist");
+      root.innerHTML = shortlistItems(list).map(({ label, item, reason }) => {
+        const [riskText, riskClass] = travelRisk(item);
+        return `
+          <article class="short-pick">
+            <div class="label">${label}</div>
+            <div class="main">${item.date} ${routeName(item)}</div>
+            <div class="sub">${priceText(item)} / ${fmtMinutes(item.total)} / ${riskText}</div>
+            <div class="meta-line">
+              <span class="pill ${riskClass}">${riskText}</span>
+              <span class="pill info">${reason}</span>
+            </div>
+          </article>
+        `;
+      }).join("");
     }
 
     function renderPriceRules() {
@@ -1704,10 +1911,18 @@
       }).join("");
     }
 
+    function renderSourceLinks(item) {
+      if (!item.sourceLinks || !item.sourceLinks.length) return "";
+      return item.sourceLinks.map(link => `
+        <a class="icon-button" href="${link.url}" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i><span>${link.label}</span></a>
+      `).join("");
+    }
+
     function renderResults() {
       const list = filteredOptions();
       const root = document.getElementById("results");
       renderSummary(list);
+      renderShortlist(list);
       renderPriceRules();
       if (!list.length) {
         root.innerHTML = `<div class="empty">条件に合う候補がありません</div>`;
@@ -1718,6 +1933,7 @@
         const [star, starClass] = starlinkLabel(item.starlink);
         const us = item.usTransit ? ["米国乗継", "warn"] : ["米国回避", "good"];
         const self = item.selfTransfer ? ["自己乗継あり", "risk"] : ["通し発券候補", "info"];
+        const [riskText, riskClass, riskReason] = travelRisk(item);
         const openUrl = searchResultUrl(item);
         return `
           <article class="card">
@@ -1729,6 +1945,7 @@
                   <span class="pill">${item.airlines}</span>
                   <span class="pill info">${item.priceSource}</span>
                   <span class="pill ${starClass}">Starlink ${star}</span>
+                  <span class="pill ${riskClass}">${riskText}</span>
                   <span class="pill ${us[1]}">${us[0]}</span>
                   <span class="pill ${self[1]}">${self[0]}</span>
                 </div>
@@ -1744,11 +1961,13 @@
                 <div class="detail"><dt>合計所要時間</dt><dd>${fmtMinutes(item.total)}</dd></div>
                 <div class="detail"><dt>乗継回数</dt><dd>${item.stops}回</dd></div>
                 <div class="detail"><dt>乗継待ち合計</dt><dd>${layoverText(item)}</dd></div>
+                <div class="detail"><dt>判断リスク</dt><dd>${riskReason}</dd></div>
                 <div class="detail"><dt>メモ</dt><dd>${item.notes}</dd></div>
               </dl>
             </div>
             <div class="actions">
               <a class="icon-button primary" href="${openUrl}" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i><span>検索で開く</span></a>
+              ${renderSourceLinks(item)}
               <button class="icon-button copy" data-url="${openUrl}"><i data-lucide="copy"></i><span>URL</span></button>
             </div>
           </article>
@@ -1773,7 +1992,8 @@
     document.querySelectorAll("[data-sort]").forEach(button => {
       button.addEventListener("click", () => {
         state.sort = button.dataset.sort;
-        document.querySelectorAll("[data-sort]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        syncControlsFromState();
+        syncUrlState();
         renderResults();
       });
     });
@@ -1781,31 +2001,42 @@
     document.querySelectorAll("[data-trip]").forEach(button => {
       button.addEventListener("click", () => {
         state.trip = button.dataset.trip;
-        document.querySelectorAll("[data-trip]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+        syncControlsFromState();
+        syncUrlState();
         renderResults();
       });
     });
 
     document.getElementById("scope").addEventListener("change", event => {
       state.scope = event.target.value;
+      syncControlsFromState();
+      syncUrlState();
       renderResults();
     });
 
     document.getElementById("avoid-us").addEventListener("click", event => {
       state.avoidUs = !state.avoidUs;
-      event.currentTarget.classList.toggle("active", state.avoidUs);
-      event.currentTarget.setAttribute("aria-pressed", String(state.avoidUs));
+      syncControlsFromState();
+      syncUrlState();
       renderResults();
     });
 
     document.getElementById("hide-self").addEventListener("click", event => {
       state.hideSelf = !state.hideSelf;
-      event.currentTarget.classList.toggle("active", state.hideSelf);
-      event.currentTarget.setAttribute("aria-pressed", String(state.hideSelf));
+      syncControlsFromState();
+      syncUrlState();
       renderResults();
     });
 
+    document.getElementById("share-view").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(currentViewUrl());
+      showToast();
+    });
+
     applyPricePolicy();
+    readStateFromUrl();
+    syncControlsFromState();
+    syncUrlState();
     renderResults();
   </script>
 </body>
