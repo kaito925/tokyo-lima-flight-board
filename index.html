@@ -647,7 +647,7 @@
               <td><b>United / ANA</b><br>速さ優先</td>
               <td>NRT(成田)→IAH(ヒューストン)→LIM(リマ)</td>
               <td>約20h。IAH待ち約1h20mの表示あり</td>
-              <td>航空会社指定の片道価格は要再確認。最安枠ではなく、時間短縮の比較対象</td>
+              <td>United公式片道: 7/24 US$2,693 / 7/25 US$2,764 / 7/26 US$2,886 / 7/27 US$2,764。約¥425,000〜456,000</td>
               <td>最速。ただし米国入国/ESTAと短い乗継がリスク。安さより時間優先なら候補</td>
             </tr>
             <tr>
@@ -916,7 +916,7 @@
         label: "最速",
         route: ["NRT", "IAH", "LIM"],
         airlines: "ANA / United",
-        price: 2660,
+        price: 2764,
         total: 20 * 60,
         layoverTotal: 80,
         stops: 1,
@@ -1393,6 +1393,12 @@
       return `https://www.kayak.co.jp/flights/${from}-${to}/${isoDate(item.date)}?sort=bestflight_a`;
     }
 
+    function unitedSearchUrl(item) {
+      const from = item.route[0];
+      const to = item.route[item.route.length - 1];
+      return `https://www.united.com/en/us/fsr/choose-flights?taxng=1&st=bestmatches&px=1,0,0,0,0,0,0,0&f=${from}&t=${to}&d=${isoDate(item.date)}&tqp=R&tt=1`;
+    }
+
     function searchResultUrl(item) {
       if (item.searchUrl) return item.searchUrl;
       if (item.priceSource === "Trip.com") return tripSearchUrl(item);
@@ -1404,6 +1410,16 @@
 
     function applyPricePolicy() {
       outboundOptions.forEach(item => {
+        if (item.route.includes("IAH") && item.airlines.includes("United")) {
+          const yen = Math.round(item.price * USD_JPY);
+          item.priceJpy = yen;
+          item.priceLabel = `約¥${yen.toLocaleString("ja-JP")} / US$${item.price.toLocaleString("en-US")}`;
+          item.priceSource = "United公式";
+          item.sourceUrl = "https://www.united.com/en-us/flights";
+          item.searchUrl = unitedSearchUrl(item);
+          item.sourceNote = "United公式の片道運賃。為替は1USD=¥158換算";
+          return;
+        }
         const cheaper = item.route[0] === "NRT" ? priceRules.outbound.cheaper[1] : priceRules.outbound.cheaper[0];
         item.priceJpy = cheaper.price;
         item.priceLabel = `¥${cheaper.price.toLocaleString("ja-JP")}〜`;
