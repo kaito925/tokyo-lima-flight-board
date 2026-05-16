@@ -613,7 +613,7 @@
       <div class="strategy-head">
         <div>
           <h2>行きの予約方針</h2>
-          <p>東京からリマへ向かう便だけを整理。空港コードは日本語名も併記。</p>
+          <p>東京からリマへ向かう便だけを整理。ルート内に空港名も併記。</p>
         </div>
         <span class="pill info">Skyscanner基準 + 円表示</span>
       </div>
@@ -703,10 +703,6 @@
     <section class="layout">
       <div class="result-list" id="results"></div>
       <aside class="side" aria-label="Reference">
-        <section class="side-section">
-          <h2>空港コード</h2>
-          <div class="code-list" id="airport-codes"></div>
-        </section>
         <section class="side-section">
           <h2>検索URL</h2>
           <div class="code-list">
@@ -1526,13 +1522,6 @@
       `).join("");
     }
 
-    function renderAirports() {
-      const used = [...new Set([...outboundOptions, ...returnOptions].flatMap(item => item.route))].sort();
-      document.getElementById("airport-codes").innerHTML = used.map(code => `
-        <div class="code-row"><b>${code}</b><span>${airports[code]}</span></div>
-      `).join("");
-    }
-
     function renderPriceRules() {
       const rule = priceRules[state.trip];
       const rows = [
@@ -1676,7 +1665,6 @@
     });
 
     applyPricePolicy();
-    renderAirports();
     renderResults();
   </script>
 </body>
