@@ -653,15 +653,15 @@
             <tr>
               <td><b>Qatar</b><br>Starlink/作業重視</td>
               <td>NRT(成田)→DOH(ドーハ)→GRU(サンパウロ)→LIM(リマ)</td>
-              <td>約38〜45h。DOH待ち約5〜10h、GRU待ち約2〜4h</td>
-              <td>Qatar指定の片道価格は要再確認。NRT→LIM全体の片道最低はExpediaで¥155,940〜</td>
-              <td>2回乗継で長いが、Qatar長距離区間はStarlink期待値が高い。体力コストと価格差を比較</td>
+              <td>確認済み: 7/25 約40h20、7/27 約46h30。DOH待ち約5h05</td>
+              <td>KAYAK確認: 7/25 ¥187,840〜、7/27 ¥235,840〜。Qatar+LATAM表示は7/27 ¥237,580</td>
+              <td>2回乗継で長いが、Qatar長距離区間はStarlink期待値が高い。7/26は同条件のQatar候補が見えず除外</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="strategy-note">
-        価格は2026/5/16時点で見えた片道の参考表示。7/24〜27ぴったりの最終価格は、カードの検索リンクで再確認する前提。
+        価格は2026/5/16時点で見えた片道の参考表示。表示額は検索サイト側で変動する前提。
         <a href="https://www.skyscanner.jp/routes/nrt/lim/tokyo-narita-to-lima.html" target="_blank" rel="noreferrer">Skyscanner NRT-LIM</a> /
         <a href="https://jp.trip.com/flights/airport-nrt-city-lim/" target="_blank" rel="noreferrer">Trip.com NRT-LIM</a> /
         <a href="https://www.expedia.co.jp/lp/flights/nrt/lim/tokyo-to-lima" target="_blank" rel="noreferrer">Expedia NRT-LIM</a>
@@ -767,7 +767,9 @@
       YVR: "バンクーバー国際空港",
       CUN: "カンクン国際空港",
       SAL: "サン・サルバドル国際空港",
-      BOG: "ボゴタ・エルドラド国際空港"
+      BOG: "ボゴタ・エルドラド国際空港",
+      MIA: "マイアミ国際空港",
+      DFW: "ダラス・フォートワース国際空港"
     };
 
     const outboundOptions = [
@@ -1085,10 +1087,15 @@
       {
         id: "20260725-doh",
         date: "7/25",
-        label: "ドーハ枠・最安",
+        label: "ドーハ枠・確認済み",
         route: ["NRT", "DOH", "GRU", "LIM"],
-        airlines: "Qatar Airways + LATAM",
-        price: 1207,
+        airlines: "LATAM / Qatar区間",
+        price: 0,
+        priceJpy: 187840,
+        priceLabel: "¥187,840",
+        priceSource: "KAYAK確認",
+        sourceNote: "7/25 NRT-LIM DOH/GRU経由。KAYAK表示",
+        searchUrl: "https://www.kayak.co.jp/flights/NRT-LIM/2026-07-25?sort=bestflight_a",
         total: 40 * 60 + 20,
         layoverTotal: 570,
         stops: 2,
@@ -1096,35 +1103,12 @@
         selfTransfer: false,
         starlink: 5,
         score: 90,
-        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
-        notes: "Starlink期待値と価格が強い。2回乗継で長い。",
+        kayak: "https://www.kayak.co.jp/flights/NRT-LIM/2026-07-25?sort=bestflight_a",
+        notes: "KAYAKで7/25 DOH/GRU経由を確認。DOH待ち5h05、GRU待ち4h25。航空会社表示はLATAM、Qatar区間の詳細は検索先で表示。",
+        manualPrice: true,
         legs: [
           { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
           { layoverAt: "DOH", duration: 305 },
-          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
-          { layoverAt: "GRU", duration: 265 },
-          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
-        ]
-      },
-      {
-        id: "20260725-doh-long",
-        date: "7/25",
-        label: "ドーハ枠・最安長め",
-        route: ["NRT", "DOH", "GRU", "LIM"],
-        airlines: "Qatar Airways + LATAM",
-        price: 1202,
-        total: 45 * 60 + 20,
-        layoverTotal: 870,
-        stops: 2,
-        usTransit: false,
-        selfTransfer: false,
-        starlink: 5,
-        score: 84,
-        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-25?sort=bestflight_a",
-        notes: "価格は最安級。ドーハ待ちが10時間あり、休憩込みならあり。",
-        legs: [
-          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
-          { layoverAt: "DOH", duration: 605 },
           { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
           { layoverAt: "GRU", duration: 265 },
           { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
@@ -1133,48 +1117,30 @@
       {
         id: "20260727-doh",
         date: "7/27",
-        label: "ドーハ枠",
+        label: "ドーハ枠・確認済み",
         route: ["NRT", "DOH", "GRU", "LIM"],
         airlines: "Qatar Airways + LATAM",
-        price: 1284,
-        total: 38 * 60 + 5,
-        layoverTotal: 435,
+        price: 0,
+        priceJpy: 237580,
+        priceLabel: "¥237,580",
+        priceSource: "KAYAK確認",
+        sourceNote: "7/27 Qatar+LATAM表示。最安同経路は¥235,840",
+        searchUrl: "https://www.kayak.co.jp/flights/NRT-LIM/2026-07-27?sort=bestflight_a",
+        total: 46 * 60 + 30,
+        layoverTotal: 945,
         stops: 2,
         usTransit: false,
         selfTransfer: false,
         starlink: 5,
         score: 88,
-        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-27?sort=bestflight_a",
-        notes: "Starlink期待値は高い。移動時間は重い。",
+        kayak: "https://www.kayak.co.jp/flights/NRT-LIM/2026-07-27?sort=bestflight_a",
+        notes: "KAYAKで7/27 Qatar+LATAM表示を確認。DOH待ち5h05、GRU待ち10h40。時間は長いがStarlink重視なら候補。",
+        manualPrice: true,
         legs: [
           { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
           { layoverAt: "DOH", duration: 305 },
           { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
-          { layoverAt: "GRU", duration: 130 },
-          { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
-        ]
-      },
-      {
-        id: "20260726-doh",
-        date: "7/26",
-        label: "ドーハ枠",
-        route: ["NRT", "DOH", "GRU", "LIM"],
-        airlines: "Qatar Airways + LATAM",
-        price: 1671,
-        total: 38 * 60 + 5,
-        layoverTotal: 435,
-        stops: 2,
-        usTransit: false,
-        selfTransfer: false,
-        starlink: 5,
-        score: 82,
-        kayak: "https://www.kayak.com/flights/TYO-LIM/2026-07-26?sort=bestflight_a",
-        notes: "7/27より高い。日程都合が合う場合の予備。",
-        legs: [
-          { from: "NRT", to: "DOH", airline: "Qatar Airways", duration: 10 * 60 + 50 },
-          { layoverAt: "DOH", duration: 305 },
-          { from: "DOH", to: "GRU", airline: "Qatar Airways", duration: 14 * 60 + 55 },
-          { layoverAt: "GRU", duration: 130 },
+          { layoverAt: "GRU", duration: 640 },
           { from: "GRU", to: "LIM", airline: "LATAM Airlines", duration: 5 * 60 + 5 }
         ]
       },
@@ -1284,23 +1250,29 @@
       {
         id: "20260827-mex-return",
         date: "8/27",
-        label: "帰り・最安寄り",
+        label: "帰り・MEX 1回確認済み",
         route: ["LIM", "MEX", "NRT"],
-        airlines: "Volaris / ANA or Aeromexico",
-        price: 835,
-        total: 41 * 60 + 30,
-        layoverTotal: 1085,
+        airlines: "LATAM Airlines",
+        price: 0,
+        priceJpy: 256340,
+        priceLabel: "¥256,340",
+        priceSource: "KAYAK確認",
+        sourceNote: "8/27 LIM-NRT MEX 1回乗継",
+        searchUrl: "https://www.kayak.co.jp/flights/LIM-NRT/2026-08-27?sort=bestflight_a",
+        total: 31 * 60 + 45,
+        layoverTotal: 500,
         stops: 1,
         usTransit: false,
         selfTransfer: false,
         starlink: 1,
         score: 88,
-        kayak: "https://www.skyscanner.com/routes/lima/tyoa/lima-to-tokyo.html",
-        notes: "Skyscannerの8/27 LIM-NRT 1 stop表示を参考化。航空会社/通し発券は要再確認。",
+        kayak: "https://www.kayak.co.jp/flights/LIM-NRT/2026-08-27?sort=bestflight_a",
+        notes: "KAYAKでMEX 1回乗継を確認。08:45発→翌々日06:30着、MEX待ち8h20。安い自己乗継2回案は別候補扱い。",
+        manualPrice: true,
         legs: [
-          { from: "LIM", to: "MEX", airline: "Volaris / Aeromexico系", duration: 6 * 60 + 5 },
-          { layoverAt: "MEX", duration: 1085 },
-          { from: "MEX", to: "NRT", airline: "ANA / Aeromexico系", duration: 17 * 60 + 20 }
+          { from: "LIM", to: "MEX", airline: "LATAM Airlines", duration: 6 * 60 + 5 },
+          { layoverAt: "MEX", duration: 500 },
+          { from: "MEX", to: "NRT", airline: "LATAM Airlines / partner", duration: 17 * 60 + 20 }
         ]
       },
       {
@@ -1394,22 +1366,27 @@
       {
         id: "20260831-kayak-hnd-cheap",
         date: "8/31",
-        label: "帰り・円表示の安値",
-        route: ["LIM", "HND"],
+        label: "帰り・HND安値確認済み",
+        route: ["LIM", "MIA", "DFW", "SFO", "HND"],
         airlines: "複数の航空会社",
-        price: 117326,
-        total: 48 * 60 + 35,
-        layoverTotal: 99999,
-        layoverUnknown: true,
+        price: 128383,
+        priceJpy: 128383,
+        priceLabel: "¥128,383",
+        priceSource: "KAYAK確認",
+        sourceNote: "8/31 LIM-HND 乗継3回",
+        searchUrl: "https://www.kayak.co.jp/flights/LIM-HND/2026-08-31?sort=price_a",
+        total: 52 * 60 + 35,
+        layoverTotal: 1668,
         stops: 3,
         usTransit: true,
-        selfTransfer: false,
+        selfTransfer: true,
         starlink: 1,
         score: 55,
-        kayak: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND",
-        notes: "KAYAK.co.jpで8/31 LIM-HND片道¥117,326。乗継空港は検索詳細で要確認。",
+        kayak: "https://www.kayak.co.jp/flights/LIM-HND/2026-08-31?sort=price_a",
+        notes: "KAYAKで8/31 LIM-HND片道¥128,383を確認。MIA待ち13h00、DFW待ち12h35、SFO待ち2h13。かなり長い自己乗継。",
+        manualPrice: true,
         legs: [
-          { from: "LIM", to: "HND", airline: "複数の航空会社・乗継3回", duration: 48 * 60 + 35 }
+          { from: "LIM", to: "HND", airline: "複数の航空会社 (MIA/DFW/SFO経由)", duration: 52 * 60 + 35 }
         ]
       },
       {
@@ -1487,10 +1464,10 @@
           ["単位", "すべて片道参考"],
           ["Skyscanner", "8月 LIM→東京 ¥202,357〜"],
           ["Skyscanner", "9月 LIM→東京 ¥195,739〜"],
-          ["KAYAK", "8/31 LIM→HND ¥117,326"]
+          ["KAYAK", "8/31 LIM→HND ¥128,383"]
         ],
         cheaper: [
-          { source: "KAYAK.co.jp", label: "8/31 LIM-HND片道", price: 117326, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND" },
+          { source: "KAYAK.co.jp", label: "8/31 LIM-HND片道", price: 128383, url: "https://www.kayak.co.jp/flights/LIM-HND/2026-08-31?sort=price_a" },
           { source: "KAYAK.co.jp", label: "LIM-TYO片道", price: 81840, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-TYO" }
         ]
       }
@@ -1578,9 +1555,10 @@
         item.priceSource = cheaper.source;
         item.sourceUrl = cheaper.url;
         item.searchUrl = cheaper.source === "Trip.com" ? tripSearchUrl(item) : expediaSearchUrl(item);
-        item.sourceNote = `${cheaper.source}の片道参考価格。日付・空席は検索先で再確認`;
+        item.sourceNote = `${cheaper.source}の片道参考価格。最新価格は検索先で変動`;
       });
       returnOptions.forEach(item => {
+        if (item.manualPrice) return;
         const isSeptember = item.date.startsWith("9/");
         const base = isSeptember ? priceRules.return.septemberPrice : priceRules.return.skyscannerPrice;
         const label = isSeptember ? priceRules.return.septemberLabel : priceRules.return.skyscannerLabel;
@@ -1589,16 +1567,16 @@
         item.priceSource = label;
         item.sourceUrl = priceRules.return.skyscannerUrl;
         item.searchUrl = skyscannerSearchUrl(item);
-        item.sourceNote = "Skyscannerの片道参考価格。日付・空席は検索先で再確認";
+        item.sourceNote = "Skyscannerの片道参考価格。最新価格は検索先で変動";
       });
       const returnCheap = returnOptions.find(item => item.id === "20260831-kayak-hnd-cheap");
       if (returnCheap) {
-        returnCheap.priceJpy = 117326;
-        returnCheap.priceLabel = "¥117,326";
+        returnCheap.priceJpy = 128383;
+        returnCheap.priceLabel = "¥128,383";
         returnCheap.priceSource = "KAYAK.co.jp";
-        returnCheap.sourceUrl = "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND";
-        returnCheap.searchUrl = kayakSearchUrl(returnCheap);
-        returnCheap.sourceNote = "KAYAKの片道参考価格。日付・空席は検索先で再確認";
+        returnCheap.sourceUrl = "https://www.kayak.co.jp/flights/LIM-HND/2026-08-31?sort=price_a";
+        returnCheap.searchUrl = "https://www.kayak.co.jp/flights/LIM-HND/2026-08-31?sort=price_a";
+        returnCheap.sourceNote = "KAYAK確認。8/31 LIM-HND 乗継3回";
       }
     }
 
@@ -1629,7 +1607,7 @@
     }
 
     function layoverText(item) {
-      return item.layoverUnknown ? "要確認" : fmtMinutes(item.layoverTotal);
+      return item.layoverUnknown ? "未取得" : fmtMinutes(item.layoverTotal);
     }
 
     function starlinkLabel(value) {
