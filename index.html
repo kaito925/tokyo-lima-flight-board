@@ -615,7 +615,7 @@
           <h2>行きの予約方針</h2>
           <p>東京からリマへ向かう便だけを整理。ルート内に空港名も併記。</p>
         </div>
-        <span class="pill info">Skyscanner基準 + 円表示</span>
+        <span class="pill info">価格は片道参考</span>
       </div>
       <div class="strategy-scroll">
         <table class="strategy-table">
@@ -624,7 +624,7 @@
               <th>候補</th>
               <th>行きルート</th>
               <th>所要/待ち時間</th>
-              <th>見えている価格</th>
+              <th>片道参考価格</th>
               <th>予約方針</th>
             </tr>
           </thead>
@@ -633,35 +633,35 @@
               <td><b>ZIPAIR + 別航空会社</b><br>最安探索枠</td>
               <td>NRT(成田)→IAH(ヒューストン)/LAX(ロサンゼルス)/MCO(オーランド)等をZIPAIR、そこからLIM(リマ)へUnited/LATAM/Copa等</td>
               <td>1回乗継なら約20〜30h。自己乗継や2回以上だと35〜55h</td>
-              <td>Skyscanner NRT-LIM往復: 7月¥221,589〜 / 8月¥209,227〜 / 9月¥190,465〜。Trip.com NRT-LIM片道系: ¥145,740〜</td>
+              <td>Trip.com NRT→LIM片道: ¥145,740〜。5〜6月に強い表示で、7/24〜27は検索先で再確認</td>
               <td>安さの鍵。7月下旬より8〜9月が強い。別切りなら乗継6h以上、できれば1泊</td>
             </tr>
             <tr>
               <td><b>Aeromexico</b><br>1回乗継の本命</td>
               <td>NRT(成田)→MEX(メキシコシティ)→LIM(リマ)</td>
               <td>約22h。MEX待ち約3h</td>
-              <td>Expedia Aeromexico NRT-LIM表示: ¥363,380〜。参考往復表示: ¥339,290</td>
+              <td>Expedia Aeromexico NRT→LIM片道: ¥363,380〜</td>
               <td>旅程が綺麗で米国回避。安くなりにくいので、良い日程が出たら待ちすぎない</td>
             </tr>
             <tr>
               <td><b>United / ANA</b><br>速さ優先</td>
               <td>NRT(成田)→IAH(ヒューストン)→LIM(リマ)</td>
               <td>約20h。IAH待ち約1h20mの表示あり</td>
-              <td>最安枠ではなく高め。下のカードでは7/24〜27の速達候補として比較</td>
+              <td>航空会社指定の片道価格は要再確認。最安枠ではなく、時間短縮の比較対象</td>
               <td>最速。ただし米国入国/ESTAと短い乗継がリスク。安さより時間優先なら候補</td>
             </tr>
             <tr>
               <td><b>Qatar</b><br>Starlink/作業重視</td>
               <td>NRT(成田)→DOH(ドーハ)→GRU(サンパウロ)→LIM(リマ)</td>
               <td>約38〜45h。DOH待ち約5〜10h、GRU待ち約2〜4h</td>
-              <td>Expedia NRT-LIM表示: Qatar往復¥260,530〜。TYO-LIM表示: Qatar往復¥273,950〜 / 5月参考¥280,750</td>
+              <td>Qatar指定の片道価格は要再確認。NRT→LIM全体の片道最低はExpediaで¥155,940〜</td>
               <td>2回乗継で長いがStarlink重視なら残す。体力コストと価格差を比較</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="strategy-note">
-        価格は2026/5/16時点で見えた円表示。7/24〜27ぴったりの最終価格は、カードの検索リンクで再確認する前提。
+        価格は2026/5/16時点で見えた片道の参考表示。7/24〜27ぴったりの最終価格は、カードの検索リンクで再確認する前提。
         <a href="https://www.skyscanner.jp/routes/nrt/lim/tokyo-narita-to-lima.html" target="_blank" rel="noreferrer">Skyscanner NRT-LIM</a> /
         <a href="https://jp.trip.com/flights/airport-nrt-city-lim/" target="_blank" rel="noreferrer">Trip.com NRT-LIM</a> /
         <a href="https://www.expedia.co.jp/lp/flights/nrt/lim/tokyo-to-lima" target="_blank" rel="noreferrer">Expedia NRT-LIM</a>
@@ -704,9 +704,9 @@
       <div class="result-list" id="results"></div>
       <aside class="side" aria-label="Reference">
         <section class="side-section">
-          <h2>価格ルール</h2>
+          <h2>価格の見方</h2>
           <div class="code-list" id="price-rules"></div>
-          <p class="note">Skyscanner日本版を基準にしつつ、安い他サイトの参考価格があるカードだけ採用。日付・空席は検索先で再確認。</p>
+          <p class="note">価格は片道の参考最低額。往復や月別相場はここに混ぜず、最終額は検索先で確認。</p>
         </section>
         <section class="side-section">
           <h2>予約タイミング</h2>
@@ -1315,9 +1315,14 @@
         skyscannerLabel: "Skyscanner NRT-LIM 7月",
         skyscannerPrice: 221589,
         skyscannerUrl: "https://www.skyscanner.jp/routes/nrt/lim/tokyo-narita-to-lima.html",
+        displayRows: [
+          ["単位", "すべて片道参考"],
+          ["Trip.com", "NRT→LIM ¥145,740〜"],
+          ["Expedia", "NRT→LIM ¥155,940〜"],
+          ["Aeromexico", "NRT→LIM ¥363,380〜"]
+        ],
         cheaper: [
-          { source: "Skyscanner", label: "NRT-LIM 9月往復", price: 190465, url: "https://www.skyscanner.jp/routes/nrt/lim/tokyo-narita-to-lima.html" },
-          { source: "Expedia.co.jp", label: "TYO-LIM片道", price: 155620, url: "https://www.expedia.co.jp/lp/flights/tyo/lim/tokyo-to-lima" },
+          { source: "Expedia.co.jp", label: "NRT-LIM片道", price: 155940, url: "https://www.expedia.co.jp/lp/flights/nrt/lim/tokyo-to-lima" },
           { source: "Trip.com", label: "NRT-LIM片道", price: 145740, url: "https://jp.trip.com/flights/airport-nrt-city-lim/" }
         ]
       },
@@ -1327,6 +1332,12 @@
         skyscannerUrl: "https://www.skyscanner.jp/routes/lim/tyoa/lima-to-tokyo.html",
         septemberLabel: "Skyscanner 9月",
         septemberPrice: 195739,
+        displayRows: [
+          ["単位", "すべて片道参考"],
+          ["Skyscanner", "8月 LIM→東京 ¥202,357〜"],
+          ["Skyscanner", "9月 LIM→東京 ¥195,739〜"],
+          ["KAYAK", "8/31 LIM→HND ¥117,326"]
+        ],
         cheaper: [
           { source: "KAYAK.co.jp", label: "8/31 LIM-HND片道", price: 117326, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND" },
           { source: "KAYAK.co.jp", label: "LIM-TYO片道", price: 81840, url: "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-TYO" }
@@ -1393,13 +1404,13 @@
 
     function applyPricePolicy() {
       outboundOptions.forEach(item => {
-        const cheaper = item.route[0] === "NRT" ? priceRules.outbound.cheaper[2] : priceRules.outbound.cheaper[1];
+        const cheaper = item.route[0] === "NRT" ? priceRules.outbound.cheaper[1] : priceRules.outbound.cheaper[0];
         item.priceJpy = cheaper.price;
         item.priceLabel = `¥${cheaper.price.toLocaleString("ja-JP")}〜`;
         item.priceSource = cheaper.source;
         item.sourceUrl = cheaper.url;
         item.searchUrl = cheaper.source === "Trip.com" ? tripSearchUrl(item) : expediaSearchUrl(item);
-        item.sourceNote = `${cheaper.source}参考価格。Skyscanner 7月基準より安いため採用`;
+        item.sourceNote = `${cheaper.source}の片道参考価格。日付・空席は検索先で再確認`;
       });
       returnOptions.forEach(item => {
         const isSeptember = item.date.startsWith("9/");
@@ -1410,7 +1421,7 @@
         item.priceSource = label;
         item.sourceUrl = priceRules.return.skyscannerUrl;
         item.searchUrl = skyscannerSearchUrl(item);
-        item.sourceNote = "Skyscanner日本版の円表示";
+        item.sourceNote = "Skyscannerの片道参考価格。日付・空席は検索先で再確認";
       });
       const returnCheap = returnOptions.find(item => item.id === "20260831-kayak-hnd-cheap");
       if (returnCheap) {
@@ -1419,7 +1430,7 @@
         returnCheap.priceSource = "KAYAK.co.jp";
         returnCheap.sourceUrl = "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND";
         returnCheap.searchUrl = kayakSearchUrl(returnCheap);
-        returnCheap.sourceNote = "KAYAK参考価格。Skyscanner 8月基準より安いため採用";
+        returnCheap.sourceNote = "KAYAKの片道参考価格。日付・空席は検索先で再確認";
       }
     }
 
@@ -1512,13 +1523,9 @@
 
     function renderPriceRules() {
       const rule = priceRules[state.trip];
-      const rows = [
-        [`基準`, `${rule.skyscannerLabel} ¥${rule.skyscannerPrice.toLocaleString("ja-JP")}〜`]
+      const rows = rule.displayRows || [
+        [`参考`, `${rule.skyscannerLabel} ¥${rule.skyscannerPrice.toLocaleString("ja-JP")}〜`]
       ];
-      if (state.trip === "return") rows.push([`9月`, `${rule.septemberLabel} ¥${rule.septemberPrice.toLocaleString("ja-JP")}〜`]);
-      rule.cheaper.forEach(item => {
-        if (item.price < rule.skyscannerPrice) rows.push([item.source, `${item.label} ¥${item.price.toLocaleString("ja-JP")}`]);
-      });
       document.getElementById("price-rules").innerHTML = rows.map(([left, right]) => `
         <div class="code-row"><b>${left}</b><span>${right}</span></div>
       `).join("");
