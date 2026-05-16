@@ -1360,6 +1360,53 @@
       return: "帰り"
     };
 
+    function isoDate(shortDate) {
+      const [month, day] = shortDate.split("/").map(Number);
+      return `2026-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
+
+    function compactDate(shortDate) {
+      return isoDate(shortDate).slice(2).replaceAll("-", "");
+    }
+
+    function endpoint(item) {
+      return {
+        from: item.route[0].toLowerCase(),
+        to: item.route[item.route.length - 1].toLowerCase()
+      };
+    }
+
+    function skyscannerSearchUrl(item) {
+      const { from, to } = endpoint(item);
+      return `https://www.skyscanner.jp/transport/flights/${from}/${to}/${compactDate(item.date)}/?adultsv2=1&cabinclass=economy&childrenv2=&ref=home&rtn=0&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false`;
+    }
+
+    function tripSearchUrl(item) {
+      const { from, to } = endpoint(item);
+      return `https://jp.trip.com/flights/showfarefirst?dcity=${from}&acity=${to}&ddate=${isoDate(item.date)}&triptype=ow&class=y&quantity=1&searchboxarg=t`;
+    }
+
+    function expediaSearchUrl(item) {
+      const from = item.route[0];
+      const to = item.route[item.route.length - 1];
+      return `https://www.expedia.co.jp/Flights-Search?trip=oneway&leg1=from:${from},to:${to},departure:${isoDate(item.date)}TANYT&passengers=adults:1,children:0,seniors:0,infantinlap:N&mode=search`;
+    }
+
+    function kayakSearchUrl(item) {
+      const from = item.route[0];
+      const to = item.route[item.route.length - 1];
+      return `https://www.kayak.co.jp/flights/${from}-${to}/${isoDate(item.date)}?sort=bestflight_a`;
+    }
+
+    function searchResultUrl(item) {
+      if (item.searchUrl) return item.searchUrl;
+      if (item.priceSource === "Trip.com") return tripSearchUrl(item);
+      if (item.priceSource && item.priceSource.startsWith("Expedia")) return expediaSearchUrl(item);
+      if (item.priceSource && item.priceSource.startsWith("Skyscanner")) return skyscannerSearchUrl(item);
+      if (item.priceSource && item.priceSource.startsWith("KAYAK")) return kayakSearchUrl(item);
+      return item.kayak || skyscannerSearchUrl(item);
+    }
+
     function applyPricePolicy() {
       outboundOptions.forEach(item => {
         const cheaper = item.route[0] === "NRT" ? priceRules.outbound.cheaper[2] : priceRules.outbound.cheaper[1];
@@ -1367,6 +1414,7 @@
         item.priceLabel = `¥${cheaper.price.toLocaleString("ja-JP")}〜`;
         item.priceSource = cheaper.source;
         item.sourceUrl = cheaper.url;
+        item.searchUrl = cheaper.source === "Trip.com" ? tripSearchUrl(item) : expediaSearchUrl(item);
         item.sourceNote = `Skyscanner 7月 ¥${priceRules.outbound.skyscannerPrice.toLocaleString("ja-JP")}〜 より安い円表示`;
       });
       returnOptions.forEach(item => {
@@ -1377,6 +1425,7 @@
         item.priceLabel = `¥${base.toLocaleString("ja-JP")}〜`;
         item.priceSource = label;
         item.sourceUrl = priceRules.return.skyscannerUrl;
+        item.searchUrl = skyscannerSearchUrl(item);
         item.sourceNote = "Skyscanner日本版の円表示";
       });
       const returnCheap = returnOptions.find(item => item.id === "20260831-kayak-hnd-cheap");
@@ -1385,6 +1434,7 @@
         returnCheap.priceLabel = "¥117,326";
         returnCheap.priceSource = "KAYAK.co.jp";
         returnCheap.sourceUrl = "https://www.kayak.co.jp/%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88/%E3%83%AA%E3%83%9E-J-Chavez-Intl-LIM/%E6%9D%B1%E4%BA%AC-%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF-HND";
+        returnCheap.searchUrl = kayakSearchUrl(returnCheap);
         returnCheap.sourceNote = "Skyscanner 8月基準より安い円表示";
       }
     }
@@ -1538,6 +1588,7 @@
         const [star, starClass] = starlinkLabel(item.starlink);
         const us = item.usTransit ? ["米国乗継", "warn"] : ["米国回避", "good"];
         const self = item.selfTransfer ? ["自己乗継あり", "risk"] : ["通し発券候補", "info"];
+        const openUrl = searchResultUrl(item);
         return `
           <article class="card">
             <header class="card-head">
@@ -1567,8 +1618,8 @@
               </dl>
             </div>
             <div class="actions">
-              <a class="icon-button primary" href="${item.sourceUrl || item.kayak}" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i><span>検索で開く</span></a>
-              <button class="icon-button copy" data-url="${item.sourceUrl || item.kayak}"><i data-lucide="copy"></i><span>URL</span></button>
+              <a class="icon-button primary" href="${openUrl}" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i><span>検索で開く</span></a>
+              <button class="icon-button copy" data-url="${openUrl}"><i data-lucide="copy"></i><span>URL</span></button>
             </div>
           </article>
         `;
